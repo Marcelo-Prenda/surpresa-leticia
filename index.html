@@ -15,10 +15,13 @@ body{
   color:#fff8f0;
   overflow-x:hidden;
   min-height:100dvh;
+  min-height:-webkit-fill-available;
 }
+html{height:-webkit-fill-available}
 h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
 .screen{
   position:fixed;top:0;left:0;width:100%;height:100dvh;
+  height:100vh; /* fallback */
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:20px;text-align:center;
   opacity:0;pointer-events:none;
@@ -77,25 +80,25 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
 #screen-1 .btn-start:hover{transform:scale(1.05);box-shadow:0 6px 35px rgba(201,168,76,.5)}
 
 /* Screen 2 - Quiz */
-#screen-2{background:linear-gradient(135deg,#1a0a0e,#2d141c)}
-#screen-2 .progress{font-size:.9rem;color:#d4a5a5;margin-bottom:10px;font-weight:300}
-#screen-2 h2{font-size:clamp(1.3rem,4vw,2rem);color:#e8c4a0;margin-bottom:25px;max-width:600px;line-height:1.4}
-#screen-2 .options{display:flex;flex-direction:column;gap:12px;width:100%;max-width:500px}
+#screen-2{background:linear-gradient(135deg,#1a0a0e,#2d141c);padding:15px}
+#screen-2 .progress{font-size:.9rem;color:#d4a5a5;margin-bottom:8px;font-weight:300}
+#screen-2 h2{font-size:clamp(1.1rem,3.8vw,2rem);color:#e8c4a0;margin-bottom:20px;max-width:600px;line-height:1.4;padding:0 10px}
+#screen-2 .options{display:flex;flex-direction:column;gap:10px;width:100%;max-width:480px}
 #screen-2 .option{
-  padding:14px 20px;background:rgba(255,248,240,.06);border:1.5px solid rgba(201,168,76,.3);
+  padding:13px 18px;background:rgba(255,248,240,.06);border:1.5px solid rgba(201,168,76,.3);
   border-radius:12px;color:#fff8f0;cursor:pointer;transition:all .25s;
-  font-family:'Lato',sans-serif;font-size:.95rem;text-align:left;
+  font-family:'Lato',sans-serif;font-size:.9rem;text-align:left;word-break:break-word;
 }
 #screen-2 .option:hover{background:rgba(201,168,76,.15);border-color:#c9a84c;transform:translateX(5px)}
 #screen-2 .option.selected{background:rgba(201,168,76,.2);border-color:#c9a84c}
 #screen-2 .text-field{
-  width:100%;max-width:500px;
+  width:100%;max-width:480px;
   padding:18px 20px;background:rgba(255,255,255,.05);border:1.5px solid rgba(201,168,76,.3);
   border-radius:12px;color:#a09080;font-family:'Lato',sans-serif;font-size:.95rem;
-  resize:none;min-height:80px;
+  resize:none;min-height:70px;
 }
 #screen-2 .btn-next{
-  margin-top:20px;padding:14px 40px;
+  margin-top:18px;padding:14px 40px;
   background:linear-gradient(135deg,#c9a84c,#a8862e);
   color:#1a0a0e;border:none;border-radius:50px;
   cursor:pointer;font-family:'Playfair Display',serif;font-size:1rem;
@@ -123,7 +126,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
 }
 #screen-3 .btn-gift:hover{transform:scale(1.05);box-shadow:0 6px 35px rgba(201,168,76,.5)}
 
-/* ===== Screen 4 - Slide + Password ===== */
+/* ===== Screen 4 - Slide + Password + Fleeing Buttons ===== */
 #screen-4{
   background:linear-gradient(135deg,#1a0a0e,#2d141c);
   overflow:hidden;
@@ -132,29 +135,28 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
 }
 #screen-4 .top-text{
   position:relative;
-  z-index:10;
-  margin-bottom:15px;
+  z-index:15;
+  margin-bottom:12px;
 }
 #screen-4 h2{
-  font-size:clamp(1.3rem,4.5vw,2.2rem);color:#e8c4a0;
-  margin-bottom:6px;
+  font-size:clamp(1.2rem,4.5vw,2.2rem);color:#e8c4a0;
+  margin-bottom:4px;
 }
 #screen-4 .sub{
   font-weight:300;color:#d4a5a5;
-  font-size:clamp(.85rem,2.2vw,1.1rem);
+  font-size:clamp(.8rem,2.2vw,1.1rem);
 }
 
-/* Slide Container */
+/* Slide Container - responsive height */
 .slide-container{
   position:relative;
   width:90%;
-  max-width:360px;
-  height:280px;
+  max-width:340px;
+  height:min(280px,45vh);
   overflow:hidden;
-  border-radius:20px;
+  border-radius:18px;
   box-shadow:0 8px 40px rgba(0,0,0,.5);
-  z-index:10;
-  margin-top:5px;
+  z-index:12;
 }
 
 /* Front panel that slides */
@@ -164,7 +166,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   width:100%;height:100%;
   background:linear-gradient(135deg,#3a1a28,#4a2030);
   border:2px solid rgba(201,168,76,.3);
-  border-radius:20px;
+  border-radius:18px;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -175,7 +177,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   -webkit-user-select:none;
   touch-action:none;
   transition:transform .5s cubic-bezier(.22,1,.36,1);
-  gap:12px;
+  gap:10px;
 }
 .slide-front.dragging{
   transition:none !important;
@@ -192,43 +194,46 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   width:100%;height:100%;
   background:linear-gradient(135deg,#1a0a0e,#2d141c);
   border:2px solid rgba(201,168,76,.2);
-  border-radius:20px;
+  border-radius:18px;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  padding:25px 20px;
+  padding:20px 16px;
   z-index:1;
 }
 .slide-back h3{
-  font-size:clamp(1rem,3vw,1.3rem);
+  font-size:clamp(.9rem,2.8vw,1.2rem);
   color:#e8c4a0;
-  margin-bottom:5px;
+  margin-bottom:4px;
 }
 .slide-back .equation{
   font-family:'Playfair Display',serif;
-  font-size:clamp(1rem,3vw,1.3rem);
+  font-size:clamp(.75rem,2.5vw,1.1rem);
   color:#fff8f0;
-  margin-bottom:20px;
-  line-height:1.6;
+  margin-bottom:14px;
+  line-height:1.5;
   background:rgba(201,168,76,.08);
-  padding:12px 20px;
-  border-radius:12px;
+  padding:10px 14px;
+  border-radius:10px;
   border:1px solid rgba(201,168,76,.15);
+  width:100%;
+  text-align:center;
+  word-break:break-word;
 }
 .slide-back .equation .num{color:#c9a84c;font-weight:700}
 .slide-back .equation .eq-sign{color:#e8c4a0;font-size:1.2em}
 .password-input{
-  width:170px;
-  padding:14px 16px;
+  width:150px;
+  padding:12px 14px;
   background:rgba(255,248,240,.08);
   border:2px solid rgba(201,168,76,.4);
   border-radius:12px;
   color:#fff8f0;
   font-family:'Lato',sans-serif;
-  font-size:1.6rem;
+  font-size:1.4rem;
   text-align:center;
-  letter-spacing:5px;
+  letter-spacing:4px;
   transition:border-color .3s;
   outline:none;
 }
@@ -238,50 +243,49 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
 }
 .password-input::placeholder{
   color:rgba(255,248,240,.25);
-  font-size:.8rem;
+  font-size:.75rem;
   letter-spacing:2px;
 }
 .btn-confirm{
-  margin-top:16px;
-  padding:12px 36px;
+  margin-top:12px;
+  padding:10px 32px;
   background:linear-gradient(135deg,#c9a84c,#a8862e);
   color:#1a0a0e;
   border:none;
   border-radius:50px;
   cursor:pointer;
   font-family:'Playfair Display',serif;
-  font-size:1rem;
+  font-size:.95rem;
   font-weight:600;
   transition:all .3s;
 }
 .btn-confirm:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(201,168,76,.3)}
 .password-error{
   color:#e8696b;
-  font-size:.85rem;
-  margin-top:10px;
-  min-height:22px;
+  font-size:.8rem;
+  margin-top:8px;
+  min-height:20px;
   font-family:'Lato',sans-serif;
   font-weight:300;
-  transition:opacity .3s;
 }
 
 /* Drag hint */
 .drag-icon{
-  font-size:2.2rem;
+  font-size:2rem;
   animation:slideHint 1.4s ease-in-out infinite;
   color:#c9a84c;
 }
 @keyframes slideHint{
   0%,100%{transform:translateX(0);opacity:.4}
-  50%{transform:translateX(20px);opacity:1}
+  50%{transform:translateX(18px);opacity:1}
 }
 .slide-front p{
   font-family:'Playfair Display',serif;
-  font-size:clamp(1rem,3vw,1.3rem);
+  font-size:clamp(.95rem,2.8vw,1.2rem);
   color:#d4a5a5;
 }
 .drag-bar{
-  width:50px;height:5px;
+  width:45px;height:4px;
   background:rgba(255,248,240,.2);
   border-radius:3px;
   animation:pulseGlow 2s infinite;
@@ -291,42 +295,61 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   50%{opacity:.7;box-shadow:0 0 12px rgba(201,168,76,.2)}
 }
 
-/* Fleeing button - purely decorative */
-#screen-4 .btn-distract{
+/* ===== FLEEING BUTTONS (decoration, always visible) ===== */
+.fleeing-container{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100dvh;
+  pointer-events:none;
+  z-index:5;
+  overflow:hidden;
+}
+.flee-btn{
   position:absolute;
-  padding:8px 18px;
-  background:rgba(201,168,76,.1);
-  color:rgba(201,168,76,.35);
-  border:1px solid rgba(201,168,76,.12);
+  padding:8px 16px;
+  background:linear-gradient(135deg, rgba(201,168,76,.12), rgba(168,134,46,.08));
+  border:1px solid rgba(201,168,76,.2);
   border-radius:50px;
   font-family:'Playfair Display',serif;
-  font-size:.7rem;
+  font-size:.75rem;
+  color:rgba(201,168,76,.6);
   white-space:nowrap;
-  pointer-events:none;
-  z-index:1;
-  opacity:0;
-  transition:opacity 2s;
+  pointer-events:auto;
+  cursor:default;
+  transition:left .8s cubic-bezier(.34,1.56,.64,1),
+             top .8s cubic-bezier(.34,1.56,.64,1),
+             opacity .5s ease,
+             transform .3s ease;
+  box-shadow:0 2px 10px rgba(201,168,76,.1);
+  opacity:.6;
+  z-index:5;
+}
+.flee-btn:hover{
+  transform:scale(1.08);
+  background:rgba(201,168,76,.2);
+  border-color:rgba(201,168,76,.4);
+  opacity:.9 !important;
 }
 
 /* Screen 5 - Surprise */
-#screen-5{background:linear-gradient(135deg,#1a0a0e,#2d141c,#1a0a0e)}
+#screen-5{background:linear-gradient(135deg,#1a0a0e,#2d141c,#1a0a0e);padding:15px}
 #screen-5 .msg{
   font-family:'Playfair Display',serif;
-  font-size:clamp(1.2rem,4vw,2rem);color:#e8c4a0;
-  line-height:1.7;max-width:500px;margin-bottom:25px;
+  font-size:clamp(1rem,3.5vw,1.8rem);color:#e8c4a0;
+  line-height:1.6;max-width:500px;margin-bottom:20px;
 }
-#screen-5 .msg strong{color:#c9a84c;font-size:clamp(1.5rem,5vw,2.5rem)}
+#screen-5 .msg strong{color:#c9a84c;font-size:clamp(1.3rem,4.5vw,2.2rem)}
 #screen-5 .btn-whatsapp{
   display:inline-block;
-  padding:16px 40px;
+  padding:14px 36px;
   background:linear-gradient(135deg,#25D366,#128C7E);
   color:#fff;border:none;border-radius:50px;
-  cursor:pointer;font-family:'Lato',sans-serif;font-size:1.1rem;
+  cursor:pointer;font-family:'Lato',sans-serif;font-size:1rem;
   font-weight:700;text-decoration:none;transition:all .3s;
   box-shadow:0 4px 20px rgba(37,211,102,.3);
 }
 #screen-5 .btn-whatsapp:hover{transform:scale(1.05);box-shadow:0 6px 30px rgba(37,211,102,.4)}
-#screen-5 .signature{margin-top:20px;color:#d4a5a5;font-style:italic}
+#screen-5 .signature{margin-top:18px;color:#d4a5a5;font-style:italic}
 
 /* Confetti */
 #confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:998}
@@ -336,14 +359,23 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   from{opacity:0;transform:translateY(30px)}
   to{opacity:1;transform:translateY(0)}
 }
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)}
+  60%{transform:translateX(-5px)}
+  80%{transform:translateX(5px)}
+}
 
 /* Scrollbar hide */
 ::-webkit-scrollbar{display:none}
 
 @media(max-width:480px){
-  #screen-2 .option{font-size:.85rem;padding:12px 16px}
-  .slide-container{height:250px;max-width:310px}
-  .password-input{width:150px;font-size:1.4rem}
+  #screen-2 .option{font-size:.82rem;padding:11px 15px}
+  .slide-container{height:min(240px,42vh);max-width:290px}
+  .password-input{width:130px;font-size:1.2rem}
+  .slide-back .equation{font-size:clamp(.7rem,2.2vw,.95rem)}
+  .flee-btn{font-size:.65rem;padding:6px 12px}
 }
 </style>
 </head>
@@ -375,8 +407,11 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   <button class="btn-gift" onclick="showScreen(4)">Ver minha surpresa 🎁</button>
 </div>
 
-<!-- ===== SCREEN 4: SLIDE + PASSWORD ===== -->
+<!-- ===== SCREEN 4: SLIDE + PASSWORD + FLEEING BUTTONS ===== -->
 <div id="screen-4" class="screen">
+  <!-- Fleeing buttons container (always on screen 4) -->
+  <div class="fleeing-container" id="fleeingContainer"></div>
+
   <div class="top-text">
     <h2>Falta só mais uma coisinha...</h2>
     <p class="sub">Arraste o painel para o lado →</p>
@@ -402,8 +437,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
       <div class="drag-icon">⟶</div>
     </div>
   </div>
-
-  <!-- Decorative fleeing buttons -->
 </div>
 
 <!-- SCREEN 5: SURPRISE -->
@@ -448,8 +481,10 @@ function showScreen(n){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById('screen-'+n);
   el.classList.add('active');
-  // Reset slide when entering screen 4
-  if(n===4) resetSlide();
+  if(n===4) {
+    resetSlide();
+    initFleeingButtons();
+  }
 }
 
 // ====== QUIZ ======
@@ -520,7 +555,6 @@ function nextQuestion(){
   }
 }
 
-// Init quiz
 document.addEventListener('DOMContentLoaded',()=>{renderQuestion()});
 
 const origShow=showScreen;
@@ -541,11 +575,13 @@ function resetSlide(){
   isOpen=false;
   slideFront.classList.remove('open','dragging');
   slideFront.style.transform='translateX(0)';
-  document.getElementById('passwordInput').value='';
-  document.getElementById('passwordError').textContent='';
+  const pw=document.getElementById('passwordInput');
+  if(pw) pw.value='';
+  const pe=document.getElementById('passwordError');
+  if(pe) pe.textContent='';
 }
 
-// ---- Touch events ----
+// Touch events
 slideFront.addEventListener('touchstart',function(e){
   if(isOpen) return;
   const t=e.touches[0];
@@ -560,13 +596,13 @@ slideFront.addEventListener('touchmove',function(e){
   const t=e.touches[0];
   currentX=t.clientX;
   const dx=currentX-startX;
-  if(dx<0) return; // only allow dragging right
+  if(dx<0) return;
   const maxW=slideContainer.offsetWidth;
   const pct=Math.min(dx/maxW,1);
   slideFront.style.transform='translateX('+(pct*100)+'%)';
 },{passive:true});
 
-slideFront.addEventListener('touchend',function(e){
+slideFront.addEventListener('touchend',function(){
   if(!isDragging) return;
   isDragging=false;
   slideFront.classList.remove('dragging');
@@ -576,15 +612,16 @@ slideFront.addEventListener('touchend',function(e){
     slideFront.classList.add('open');
     slideFront.style.transform='';
     isOpen=true;
-    setTimeout(()=>document.getElementById('passwordInput').focus(),400);
-    // Start distraction buttons
-    spawnDistractButtons();
+    setTimeout(()=>{
+      const inp=document.getElementById('passwordInput');
+      if(inp) inp.focus();
+    },400);
   }else{
     slideFront.style.transform='translateX(0)';
   }
 },{passive:true});
 
-// ---- Mouse events (desktop) ----
+// Mouse events
 slideFront.addEventListener('mousedown',function(e){
   if(isOpen) return;
   startX=e.clientX;
@@ -603,7 +640,7 @@ document.addEventListener('mousemove',function(e){
   slideFront.style.transform='translateX('+(pct*100)+'%)';
 });
 
-document.addEventListener('mouseup',function(e){
+document.addEventListener('mouseup',function(){
   if(!isDragging) return;
   isDragging=false;
   slideFront.classList.remove('dragging');
@@ -613,8 +650,10 @@ document.addEventListener('mouseup',function(e){
     slideFront.classList.add('open');
     slideFront.style.transform='';
     isOpen=true;
-    setTimeout(()=>document.getElementById('passwordInput').focus(),400);
-    spawnDistractButtons();
+    setTimeout(()=>{
+      const inp=document.getElementById('passwordInput');
+      if(inp) inp.focus();
+    },400);
   }else{
     slideFront.style.transform='translateX(0)';
   }
@@ -630,6 +669,7 @@ function checkPassword(){
     err.textContent='';
     err.style.color='#4caf50';
     err.textContent='✅ Senha correta!';
+    input.style.animation='';
     setTimeout(()=>{
       showScreen(5);
       confettiStart();
@@ -639,64 +679,82 @@ function checkPassword(){
     err.textContent='❌ Resposta incorreta, tente novamente 💪';
     input.value='';
     input.focus();
-    // Shake animation
     input.style.animation='shake .4s ease';
     setTimeout(()=>input.style.animation='',500);
   }
 }
 
-// Allow Enter key on password field
 document.getElementById('passwordInput').addEventListener('keydown',function(e){
   if(e.key==='Enter') checkPassword();
 });
 
-// ====== DECORATIVE FLEEING BUTTONS ======
-let distractInterval=null;
+// ====== FLEEING BUTTONS (appear immediately on screen 4) ======
+let fleeingInterval=null;
 
-function spawnDistractButtons(){
-  // Create 3-4 little fleeing buttons that move around
-  const screen4=document.getElementById('screen-4');
-  const existing=screen4.querySelectorAll('.btn-distract');
-  existing.forEach(el=>el.remove());
+function initFleeingButtons(){
+  const container=document.getElementById('fleeingContainer');
+  if(!container) return;
 
-  const labels=['🎯 Clique aqui!','💝 Presente','🎁 Surpresa','💕 Amor'];
-  const buttons=[];
+  // Clear existing
+  if(fleeingInterval) clearInterval(fleeingInterval);
+  container.innerHTML='';
 
-  for(let i=0;i<4;i++){
+  const labels=[
+    '🎯 Me pegue!','💝 Presente','🎁 Surpresa','💕 Amor',
+    '✨ Clique aqui','🌟 Opa!','👉 Aqui não!','😘 Quase!'
+  ];
+
+  const btns=[];
+
+  for(let i=0;i<8;i++){
     const btn=document.createElement('div');
-    btn.className='btn-distract';
-    btn.textContent=labels[i];
-    btn.style.left=(10+Math.random()*70)+'%';
-    btn.style.top=(5+Math.random()*30)+'%';
+    btn.className='flee-btn';
+    btn.textContent=labels[i % labels.length];
+    const x=5+Math.random()*75;
+    const y=10+Math.random()*50;
+    btn.style.left=x+'%';
+    btn.style.top=y+'%';
     btn.style.opacity='0';
-    screen4.appendChild(btn);
-    buttons.push(btn);
+    btn.style.transition='none';
+    container.appendChild(btn);
+    btns.push(btn);
   }
 
-  // Fade in
-  setTimeout(()=>{
-    buttons.forEach(b=>b.style.opacity='.7');
-  },100);
-
-  // Move them around periodically
-  let moveCount=0;
-  if(distractInterval) clearInterval(distractInterval);
-  distractInterval=setInterval(()=>{
-    moveCount++;
-    buttons.forEach((btn,i)=>{
-      const x=10+Math.random()*75;
-      const y=5+Math.random()*35;
-      btn.style.left=x+'%';
-      btn.style.top=y+'%';
-      btn.style.opacity=.3+Math.random()*.5;
+  // Fade in after a tiny delay
+  requestAnimationFrame(()=>{
+    btns.forEach(b=>{
+      b.style.transition='opacity 1s ease, left .6s cubic-bezier(.34,1.56,.64,1), top .6s cubic-bezier(.34,1.56,.64,1)';
+      b.style.opacity=(.35+Math.random()*.4).toFixed(2);
     });
-    // Stop after 30 moves (about 60 seconds)
-    if(moveCount>30){
-      clearInterval(distractInterval);
-      distractInterval=null;
-      buttons.forEach(b=>{b.style.opacity='0'});
-    }
-  },2000);
+  });
+
+  // Move them every 1.6s - they always run away
+  let moveCount=0;
+  fleeingInterval=setInterval(()=>{
+    moveCount++;
+    const vw=window.innerWidth;
+    const vh=window.innerHeight;
+
+    btns.forEach(btn=>{
+      const rect=btn.getBoundingClientRect();
+      const bx=rect.left, by=rect.top;
+      const bw=rect.width, bh=rect.height;
+
+      // Move away from center-ish, but stay visible
+      let nx=5+Math.random()*75;
+      let ny=8+Math.random()*55;
+
+      // Ensure minimum margin from edges
+      nx=Math.max(2,Math.min(82,nx));
+      ny=Math.max(5,Math.min(65,ny));
+
+      btn.style.left=nx+'%';
+      btn.style.top=ny+'%';
+
+      // Slight opacity variation
+      btn.style.opacity=(.3+Math.random()*.5).toFixed(2);
+    });
+  },1600);
 }
 
 // ====== CONFETTI ======
@@ -734,22 +792,9 @@ function confettiStart(){
   draw();
 }
 
-// Shake animation for wrong password
-const styleSheet=document.createElement('style');
-styleSheet.textContent=`
-@keyframes shake{
-  0%,100%{transform:translateX(0)}
-  20%{transform:translateX(-8px)}
-  40%{transform:translateX(8px)}
-  60%{transform:translateX(-5px)}
-  80%{transform:translateX(5px)}
-}`;
-document.head.appendChild(styleSheet);
-
 window.addEventListener('resize',()=>{
   const c=document.getElementById('confetti-canvas');
-  c.width=window.innerWidth;
-  c.height=window.innerHeight;
+  if(c){c.width=window.innerWidth;c.height=window.innerHeight}
 });
 </script>
 </body>
