@@ -21,7 +21,7 @@ html{height:-webkit-fill-available}
 h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
 .screen{
   position:fixed;top:0;left:0;width:100%;height:100dvh;
-  height:100vh; /* fallback */
+  height:100vh;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:20px;text-align:center;
   opacity:0;pointer-events:none;
@@ -126,7 +126,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
 }
 #screen-3 .btn-gift:hover{transform:scale(1.05);box-shadow:0 6px 35px rgba(201,168,76,.5)}
 
-/* ===== Screen 4 - Slide + Password + Fleeing Buttons ===== */
+/* ===== Screen 4 - Puzzle + Slide + Password ===== */
 #screen-4{
   background:linear-gradient(135deg,#1a0a0e,#2d141c);
   overflow:hidden;
@@ -136,7 +136,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
 #screen-4 .top-text{
   position:relative;
   z-index:15;
-  margin-bottom:12px;
+  margin-bottom:10px;
 }
 #screen-4 h2{
   font-size:clamp(1.2rem,4.5vw,2.2rem);color:#e8c4a0;
@@ -145,9 +145,124 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
 #screen-4 .sub{
   font-weight:300;color:#d4a5a5;
   font-size:clamp(.8rem,2.2vw,1.1rem);
+  transition:opacity .5s;
 }
 
-/* Slide Container - responsive height */
+/* ======== HEART MEMORY PUZZLE ======== */
+.puzzle-overlay{
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:20;
+  background:rgba(26,10,14,.92);
+  transition:opacity .6s ease, transform .6s ease;
+  gap:10px;
+  pointer-events:auto;
+}
+.puzzle-overlay.hidden{
+  opacity:0;
+  pointer-events:none;
+  transform:scale(.9);
+}
+.puzzle-overlay h3{
+  font-size:clamp(1rem,3.5vw,1.5rem);
+  color:#e8c4a0;
+  margin-bottom:2px;
+}
+.puzzle-overlay .puzzle-hint{
+  font-size:clamp(.75rem,2.2vw,1rem);
+  color:#d4a5a5;
+  font-weight:300;
+  margin-bottom:6px;
+  min-height:1.4em;
+}
+.puzzle-overlay .puzzle-sub{
+  font-size:clamp(.7rem,2vw,.9rem);
+  color:rgba(201,168,76,.5);
+  font-weight:300;
+  margin-bottom:4px;
+}
+
+/* Heart grid */
+.heart-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:clamp(8px,2vw,14px);
+  max-width:260px;
+  width:80%;
+  margin:4px 0;
+}
+.heart-cell{
+  aspect-ratio:1;
+  width:100%;
+  border-radius:14px;
+  background:rgba(255,248,240,.05);
+  border:2px solid rgba(201,168,76,.2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(1.5rem,5vw,2.2rem);
+  cursor:pointer;
+  transition:all .25s ease;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  position:relative;
+}
+.heart-cell:active{transform:scale(.92)}
+.heart-cell.lit{
+  background:rgba(201,168,76,.3);
+  border-color:#c9a84c;
+  box-shadow:0 0 25px rgba(201,168,76,.4), inset 0 0 15px rgba(201,168,76,.1);
+  transform:scale(1.08);
+}
+.heart-cell.correct-flash{
+  background:rgba(76,175,80,.3);
+  border-color:#4caf50;
+  box-shadow:0 0 20px rgba(76,175,80,.3);
+}
+.heart-cell.wrong-flash{
+  background:rgba(232,105,107,.3);
+  border-color:#e8696b;
+  box-shadow:0 0 20px rgba(232,105,107,.3);
+  animation:cellShake .4s ease;
+}
+.heart-cell.disabled{
+  pointer-events:none;
+  opacity:.5;
+}
+@keyframes cellShake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-6px)}
+  40%{transform:translateX(6px)}
+  60%{transform:translateX(-4px)}
+  80%{transform:translateX(4px)}
+}
+
+.puzzle-success{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  animation:fadeInUp .5s ease;
+}
+.puzzle-success.show{
+  display:flex;
+}
+.puzzle-success .check{
+  font-size:clamp(2rem,6vw,3rem);
+  color:#4caf50;
+}
+.puzzle-success p{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1rem,3vw,1.4rem);
+  color:#e8c4a0;
+}
+
+/* Slide Container */
 .slide-container{
   position:relative;
   width:90%;
@@ -295,7 +410,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   50%{opacity:.7;box-shadow:0 0 12px rgba(201,168,76,.2)}
 }
 
-/* ===== FLEEING BUTTONS (decoration, always visible) ===== */
+/* Fleeing buttons */
 .fleeing-container{
   position:fixed;
   top:0;left:0;
@@ -366,8 +481,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   60%{transform:translateX(-5px)}
   80%{transform:translateX(5px)}
 }
-
-/* Scrollbar hide */
 ::-webkit-scrollbar{display:none}
 
 @media(max-width:480px){
@@ -376,6 +489,8 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   .password-input{width:130px;font-size:1.2rem}
   .slide-back .equation{font-size:clamp(.7rem,2.2vw,.95rem)}
   .flee-btn{font-size:.65rem;padding:6px 12px}
+  .heart-grid{max-width:210px;gap:8px}
+  .heart-cell{font-size:clamp(1.3rem,4.5vw,1.8rem);border-radius:12px}
 }
 </style>
 </head>
@@ -384,7 +499,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
 <div id="petals"></div>
 <canvas id="confetti-canvas"></canvas>
 
-<!-- SCREEN 1: OPENING -->
+<!-- SCREEN 1 -->
 <div id="screen-1" class="screen active">
   <h1 class="title">Letícia Sant'Anna</h1>
   <p class="subtitle">Hoje tem uma surpresa especial esperando por você 💕</p>
@@ -407,18 +522,35 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   <button class="btn-gift" onclick="showScreen(4)">Ver minha surpresa 🎁</button>
 </div>
 
-<!-- ===== SCREEN 4: SLIDE + PASSWORD + FLEEING BUTTONS ===== -->
+<!-- ===== SCREEN 4: HEART MEMORY → SLIDE → PASSWORD ===== -->
 <div id="screen-4" class="screen">
-  <!-- Fleeing buttons container (always on screen 4) -->
   <div class="fleeing-container" id="fleeingContainer"></div>
 
   <div class="top-text">
     <h2>Falta só mais uma coisinha...</h2>
-    <p class="sub">Arraste o painel para o lado →</p>
+    <p class="sub" id="screen4-sub">Complete o desafio do coração 💕</p>
   </div>
 
   <div class="slide-container" id="slideContainer">
-    <!-- Back panel (password challenge) -->
+    <!-- HEART MEMORY PUZZLE -->
+    <div class="puzzle-overlay" id="puzzleOverlay">
+      <h3>💕 Desafio do Coração</h3>
+      <p class="puzzle-hint" id="puzzleHint">Preste atenção na sequência...</p>
+      <div class="heart-grid" id="heartGrid">
+        <div class="heart-cell" data-idx="0">💗</div>
+        <div class="heart-cell" data-idx="1">💗</div>
+        <div class="heart-cell" data-idx="2">💗</div>
+        <div class="heart-cell" data-idx="3">💗</div>
+        <div class="heart-cell" data-idx="4">💗</div>
+        <div class="heart-cell" data-idx="5">💗</div>
+        <div class="heart-cell" data-idx="6">💗</div>
+        <div class="heart-cell" data-idx="7">💗</div>
+        <div class="heart-cell" data-idx="8">💗</div>
+      </div>
+      <p class="puzzle-sub" id="puzzleSub">👆 Toque na mesma ordem</p>
+    </div>
+
+    <!-- Back panel (password) -->
     <div class="slide-back">
       <h3>💝 Resolva o enigma</h3>
       <div class="equation">
@@ -464,8 +596,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
 (function createPetals(){
   const container=document.getElementById('petals');
   for(let i=0;i<25;i++){
-    const p=document.createElement('div');
-    p.className='petal';
+    const p=document.createElement('div');p.className='petal';
     p.style.left=Math.random()*100+'%';
     p.style.width=(12+Math.random()*14)+'px';
     p.style.height=(p.style.width.replace('px','')*1.4)+'px';
@@ -481,36 +612,26 @@ function showScreen(n){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById('screen-'+n);
   el.classList.add('active');
-  if(n===4) {
-    resetSlide();
+  if(n===4){
+    resetAll();
     initFleeingButtons();
+    initHeartPuzzle();
   }
 }
 
 // ====== QUIZ ======
 const questions=[
-  {q:'Em qual bairro nós nos conhecemos?', type:'choice',
-   opts:['Gramaxho','Gramacho','Gramados','Centro']},
-  {q:'Quem teve mais vergonha na primeira vez que visitou a casa do outro?', type:'choice',
-   opts:['Marcelo','Letícia','Os dois igualmente','Nenhum dos dois']},
-  {q:'Qual foi a nossa primeira viagem juntos?', type:'choice',
-   opts:['Para a casa do outro (pq era uma viagem)','Cabo Frio','Santa Catarina','Santa Catarima']},
-  {q:'Se a gente fosse comer a mesma coisa para sempre, qual seria?', type:'choice',
-   opts:['Pizza','Churrasco','Feijoada','Lasanha']},
-  {q:'Qual foi o dia mais engraçado que vocês tiveram juntos?', type:'text',
-   placeholder:'Essa você vai me responder pessoalmente, meu amor 💬'},
-  {q:'Qual série marcou mais a nossa história juntos?', type:'choice',
-   opts:['Game of Thrones','Vikings ou The Last Kingdom','Stranger Things','The Good Doctor']},
-  {q:'Qual é aquela mania do Marcelo que você acha mais engraçada?', type:'choice',
-   opts:['Imitar baleia','Coçar os dedos quando está pensando','Falar dormindo (desce daí)','Esquecer tudo no carro']},
-  {q:'Quem é mais provável de esquecer onde guardou a chave de casa?', type:'choice',
-   opts:['Letícia','Os dois','Marcelo','Nenhum dos dois']},
-  {q:'Qual foi o momento mais emocionante do dia 19 de dezembro de 2025?', type:'text',
-   placeholder:'Esse momento foi tão especial que você vai me contar pessoalmente 💍'},
-  {q:'Se não estivéssemos em Miguel Pereira agora, onde estaríamos comemorando?', type:'text',
-   placeholder:'Me responde isso pessoalmente, meu amor 🌍'}
+  {q:'Em qual bairro nós nos conhecemos?',type:'choice',opts:['Gramaxho','Gramacho','Gramados','Centro']},
+  {q:'Quem teve mais vergonha na primeira vez que visitou a casa do outro?',type:'choice',opts:['Marcelo','Letícia','Os dois igualmente','Nenhum dos dois']},
+  {q:'Qual foi a nossa primeira viagem juntos?',type:'choice',opts:['Para a casa do outro (pq era uma viagem)','Cabo Frio','Santa Catarina','Santa Catarima']},
+  {q:'Se a gente fosse comer a mesma coisa para sempre, qual seria?',type:'choice',opts:['Pizza','Churrasco','Feijoada','Lasanha']},
+  {q:'Qual foi o dia mais engraçado que vocês tiveram juntos?',type:'text',placeholder:'Essa você vai me responder pessoalmente, meu amor 💬'},
+  {q:'Qual série marcou mais a nossa história juntos?',type:'choice',opts:['Game of Thrones','Vikings ou The Last Kingdom','Stranger Things','The Good Doctor']},
+  {q:'Qual é aquela mania do Marcelo que você acha mais engraçada?',type:'choice',opts:['Imitar baleia','Coçar os dedos quando está pensando','Falar dormindo (desce daí)','Esquecer tudo no carro']},
+  {q:'Quem é mais provável de esquecer onde guardou a chave de casa?',type:'choice',opts:['Letícia','Os dois','Marcelo','Nenhum dos dois']},
+  {q:'Qual foi o momento mais emocionante do dia 19 de dezembro de 2025?',type:'text',placeholder:'Esse momento foi tão especial que você vai me contar pessoalmente 💍'},
+  {q:'Se não estivéssemos em Miguel Pereira agora, onde estaríamos comemorando?',type:'text',placeholder:'Me responde isso pessoalmente, meu amor 🌍'}
 ];
-
 let currentQuestion=0;
 
 function renderQuestion(){
@@ -519,283 +640,269 @@ function renderQuestion(){
   document.getElementById('quiz-question').textContent=q.q;
   const optsDiv=document.getElementById('quiz-options');
   const nextBtn=document.getElementById('btn-quiz-next');
-  optsDiv.innerHTML='';
-  nextBtn.style.display='none';
-
+  optsDiv.innerHTML='';nextBtn.style.display='none';
   if(q.type==='choice'){
     q.opts.forEach(o=>{
-      const btn=document.createElement('button');
-      btn.className='option';
-      btn.textContent=o;
+      const btn=document.createElement('button');btn.className='option';btn.textContent=o;
       btn.onclick=function(){
         document.querySelectorAll('.option').forEach(b=>b.classList.remove('selected'));
-        this.classList.add('selected');
-        nextBtn.style.display='block';
-      };
-      optsDiv.appendChild(btn);
+        this.classList.add('selected');nextBtn.style.display='block';
+      };optsDiv.appendChild(btn);
     });
   }else{
-    const ta=document.createElement('textarea');
-    ta.className='text-field';
-    ta.placeholder=q.placeholder||'';
-    ta.disabled=true;
-    ta.rows=3;
-    optsDiv.appendChild(ta);
-    nextBtn.style.display='block';
+    const ta=document.createElement('textarea');ta.className='text-field';
+    ta.placeholder=q.placeholder||'';ta.disabled=true;ta.rows=3;
+    optsDiv.appendChild(ta);nextBtn.style.display='block';
   }
 }
-
 function nextQuestion(){
   currentQuestion++;
-  if(currentQuestion<questions.length){
-    renderQuestion();
-  }else{
-    document.getElementById('screen-2').classList.remove('active');
-    document.getElementById('screen-3').classList.add('active');
+  if(currentQuestion<questions.length) renderQuestion();
+  else{document.getElementById('screen-2').classList.remove('active');document.getElementById('screen-3').classList.add('active');}
+}
+document.addEventListener('DOMContentLoaded',()=>{renderQuestion()});
+const origShow=showScreen;
+showScreen=function(n){origShow(n);if(n===2){currentQuestion=0;renderQuestion();}};
+
+// ====== HEART MEMORY PUZZLE ======
+let puzzleSequence=[];
+let userSequence=[];
+let puzzleStep=0;
+let isPlaying=false;
+let puzzleSolved=false;
+
+function initHeartPuzzle(){
+  puzzleSolved=false;
+  const overlay=document.getElementById('puzzleOverlay');
+  overlay.classList.remove('hidden');
+  document.getElementById('screen4-sub').textContent='Complete o desafio do coração 💕';
+  generateSequence();
+  setTimeout(()=>playSequence(),600);
+}
+
+function generateSequence(){
+  puzzleSequence=[];
+  for(let i=0;i<4;i++){
+    puzzleSequence.push(Math.floor(Math.random()*9));
   }
 }
 
-document.addEventListener('DOMContentLoaded',()=>{renderQuestion()});
+function playSequence(){
+  isPlaying=true;
+  userSequence=[];
+  puzzleStep=0;
+  const cells=document.querySelectorAll('.heart-cell');
+  cells.forEach(c=>c.classList.remove('lit','correct-flash','wrong-flash','disabled'));
+  document.getElementById('puzzleHint').textContent='Preste atenção... 💫';
+  document.getElementById('puzzleSub').textContent='👀 Observando...';
 
-const origShow=showScreen;
-showScreen=function(n){
-  origShow(n);
-  if(n===2){currentQuestion=0;renderQuestion();}
-};
+  let i=0;
+  function lightNext(){
+    if(i>=puzzleSequence.length){
+      isPlaying=false;
+      cells.forEach(c=>c.classList.remove('disabled'));
+      document.getElementById('puzzleHint').textContent='Sua vez! Repita a sequência 👆';
+      document.getElementById('puzzleSub').textContent='❤️ Toque nos corações na mesma ordem';
+      return;
+    }
+    const idx=puzzleSequence[i];
+    const cell=cells[idx];
+    cell.classList.add('lit');
+    setTimeout(()=>{
+      cell.classList.remove('lit');
+      i++;
+      setTimeout(lightNext,300);
+    },700);
+  }
+  lightNext();
+}
 
-// ====== SLIDE MECHANISM ======
+function handleHeartClick(idx){
+  if(isPlaying || puzzleSolved) return;
+
+  const cells=document.querySelectorAll('.heart-cell');
+  const cell=cells[idx];
+
+  cell.classList.add('lit');
+  userSequence.push(idx);
+
+  if(userSequence[userSequence.length-1]!==puzzleSequence[userSequence.length-1]){
+    // Wrong!
+    cell.classList.remove('lit');
+    cell.classList.add('wrong-flash');
+    document.getElementById('puzzleHint').textContent='😅 Não foi dessa vez! Vamos de novo...';
+    document.getElementById('puzzleSub').textContent='🔄 Nova sequência...';
+    cells.forEach(c=>c.classList.add('disabled'));
+    setTimeout(()=>{
+      cells.forEach(c=>c.classList.remove('wrong-flash','lit','disabled'));
+      playSequence();
+    },1200);
+    return;
+  }
+
+  // Correct so far
+  setTimeout(()=>cell.classList.remove('lit'),300);
+
+  if(userSequence.length===puzzleSequence.length){
+    // All correct!
+    puzzleSolved=true;
+    document.getElementById('puzzleHint').textContent='💕 Perfeita! ❤️';
+    document.getElementById('puzzleSub').textContent='✨';
+
+    // Celebration flash
+    cells.forEach((c,i)=>{
+      setTimeout(()=>c.classList.add('correct-flash'),i*80);
+    });
+    setTimeout(()=>{
+      cells.forEach(c=>c.classList.remove('correct-flash'));
+      // Show success message
+      const puzzleEl=document.getElementById('puzzleOverlay');
+      puzzleEl.innerHTML=`
+        <div class="puzzle-success show">
+          <div class="check">💕</div>
+          <p>Seu coração sabe o caminho!</p>
+          <p style="font-size:clamp(.8rem,2.2vw,1rem);color:#d4a5a5;font-weight:300">Agora arraste o painel para desbloquear 🎁</p>
+        </div>
+      `;
+      // After showing success, fade puzzle and reveal slide
+      setTimeout(()=>{
+        puzzleEl.classList.add('hidden');
+        document.getElementById('screen4-sub').textContent='Arraste o painel para o lado →';
+        // Enable the slide
+        enableSlide();
+      },1500);
+    },500);
+  }
+}
+
+// Attach heart click handlers
+document.querySelectorAll('.heart-cell').forEach(cell=>{
+  cell.addEventListener('click',()=>handleHeartClick(parseInt(cell.dataset.idx)));
+  cell.addEventListener('touchstart',function(e){
+    // Avoid double-firing on mobile
+    if(this.dataset.touched) return;
+    this.dataset.touched='true';
+    handleHeartClick(parseInt(this.dataset.idx));
+    setTimeout(()=>delete this.dataset.touched,300);
+  },{passive:true});
+});
+
+// ====== SLIDE MECHANISM (only enabled after puzzle) ======
 const slideFront=document.getElementById('slideFront');
-const slideContainer=document.getElementById('slideContainer');
-let isDragging=false;
-let startX=0;
-let currentX=0;
-let isOpen=false;
+const sContainer=document.getElementById('slideContainer');
+let isDragging=false,startX=0,currentX=0,isOpen=false,slideEnabled=false;
 
-function resetSlide(){
-  isOpen=false;
+function enableSlide(){slideEnabled=true;}
+function disableSlide(){slideEnabled=false;}
+
+function resetAll(){
+  isOpen=false;isDragging=false;slideEnabled=false;
   slideFront.classList.remove('open','dragging');
   slideFront.style.transform='translateX(0)';
   const pw=document.getElementById('passwordInput');
-  if(pw) pw.value='';
+  if(pw)pw.value='';
   const pe=document.getElementById('passwordError');
-  if(pe) pe.textContent='';
+  if(pe)pe.textContent='';
 }
 
-// Touch events
 slideFront.addEventListener('touchstart',function(e){
-  if(isOpen) return;
-  const t=e.touches[0];
-  startX=t.clientX;
-  currentX=startX;
-  isDragging=true;
-  slideFront.classList.add('dragging');
+  if(!slideEnabled||isOpen)return;
+  const t=e.touches[0];startX=t.clientX;currentX=startX;
+  isDragging=true;slideFront.classList.add('dragging');
 },{passive:true});
-
 slideFront.addEventListener('touchmove',function(e){
-  if(!isDragging || isOpen) return;
-  const t=e.touches[0];
-  currentX=t.clientX;
-  const dx=currentX-startX;
-  if(dx<0) return;
-  const maxW=slideContainer.offsetWidth;
-  const pct=Math.min(dx/maxW,1);
+  if(!isDragging||!slideEnabled||isOpen)return;
+  const t=e.touches[0];currentX=t.clientX;
+  const dx=currentX-startX;if(dx<0)return;
+  const pct=Math.min(dx/sContainer.offsetWidth,1);
   slideFront.style.transform='translateX('+(pct*100)+'%)';
 },{passive:true});
-
 slideFront.addEventListener('touchend',function(){
-  if(!isDragging) return;
-  isDragging=false;
-  slideFront.classList.remove('dragging');
+  if(!isDragging||!slideEnabled)return;
+  isDragging=false;slideFront.classList.remove('dragging');
   const dx=currentX-startX;
-  const maxW=slideContainer.offsetWidth;
-  if(dx/maxW>0.4){
-    slideFront.classList.add('open');
-    slideFront.style.transform='';
-    isOpen=true;
-    setTimeout(()=>{
-      const inp=document.getElementById('passwordInput');
-      if(inp) inp.focus();
-    },400);
-  }else{
-    slideFront.style.transform='translateX(0)';
-  }
+  if(dx/sContainer.offsetWidth>0.4){
+    slideFront.classList.add('open');slideFront.style.transform='';isOpen=true;
+    setTimeout(()=>{const i=document.getElementById('passwordInput');if(i)i.focus();},400);
+  }else slideFront.style.transform='translateX(0)';
 },{passive:true});
 
-// Mouse events
 slideFront.addEventListener('mousedown',function(e){
-  if(isOpen) return;
-  startX=e.clientX;
-  currentX=startX;
-  isDragging=true;
-  slideFront.classList.add('dragging');
+  if(!slideEnabled||isOpen)return;
+  startX=e.clientX;currentX=startX;isDragging=true;slideFront.classList.add('dragging');
 });
-
 document.addEventListener('mousemove',function(e){
-  if(!isDragging || isOpen) return;
-  currentX=e.clientX;
-  const dx=currentX-startX;
-  if(dx<0) return;
-  const maxW=slideContainer.offsetWidth;
-  const pct=Math.min(dx/maxW,1);
+  if(!isDragging||!slideEnabled||isOpen)return;
+  currentX=e.clientX;const dx=currentX-startX;if(dx<0)return;
+  const pct=Math.min(dx/sContainer.offsetWidth,1);
   slideFront.style.transform='translateX('+(pct*100)+'%)';
 });
-
 document.addEventListener('mouseup',function(){
-  if(!isDragging) return;
-  isDragging=false;
-  slideFront.classList.remove('dragging');
+  if(!isDragging||!slideEnabled)return;
+  isDragging=false;slideFront.classList.remove('dragging');
   const dx=currentX-startX;
-  const maxW=slideContainer.offsetWidth;
-  if(dx/maxW>0.4){
-    slideFront.classList.add('open');
-    slideFront.style.transform='';
-    isOpen=true;
-    setTimeout(()=>{
-      const inp=document.getElementById('passwordInput');
-      if(inp) inp.focus();
-    },400);
-  }else{
-    slideFront.style.transform='translateX(0)';
-  }
+  if(dx/sContainer.offsetWidth>0.4){
+    slideFront.classList.add('open');slideFront.style.transform='';isOpen=true;
+    setTimeout(()=>{const i=document.getElementById('passwordInput');if(i)i.focus();},400);
+  }else slideFront.style.transform='translateX(0)';
 });
 
-// ====== PASSWORD CHECK ======
+// ====== PASSWORD ======
 function checkPassword(){
   const input=document.getElementById('passwordInput');
   const err=document.getElementById('passwordError');
   const val=input.value.trim();
-
   if(val==='191218'){
-    err.textContent='';
-    err.style.color='#4caf50';
-    err.textContent='✅ Senha correta!';
-    input.style.animation='';
-    setTimeout(()=>{
-      showScreen(5);
-      confettiStart();
-    },600);
+    err.textContent='';err.style.color='#4caf50';err.textContent='✅ Senha correta!';input.style.animation='';
+    setTimeout(()=>{showScreen(5);confettiStart();},600);
   }else{
-    err.style.color='#e8696b';
-    err.textContent='❌ Resposta incorreta, tente novamente 💪';
-    input.value='';
-    input.focus();
-    input.style.animation='shake .4s ease';
-    setTimeout(()=>input.style.animation='',500);
+    err.style.color='#e8696b';err.textContent='❌ Resposta incorreta, tente novamente 💪';
+    input.value='';input.focus();input.style.animation='shake .4s ease';setTimeout(()=>input.style.animation='',500);
   }
 }
+document.getElementById('passwordInput').addEventListener('keydown',function(e){if(e.key==='Enter')checkPassword();});
 
-document.getElementById('passwordInput').addEventListener('keydown',function(e){
-  if(e.key==='Enter') checkPassword();
-});
-
-// ====== FLEEING BUTTONS (appear immediately on screen 4) ======
+// ====== FLEEING BUTTONS ======
 let fleeingInterval=null;
-
 function initFleeingButtons(){
   const container=document.getElementById('fleeingContainer');
-  if(!container) return;
-
-  // Clear existing
-  if(fleeingInterval) clearInterval(fleeingInterval);
+  if(!container)return;
+  if(fleeingInterval)clearInterval(fleeingInterval);
   container.innerHTML='';
-
-  const labels=[
-    '🎯 Me pegue!','💝 Presente','🎁 Surpresa','💕 Amor',
-    '✨ Clique aqui','🌟 Opa!','👉 Aqui não!','😘 Quase!'
-  ];
-
+  const labels=['🎯 Me pegue!','💝 Presente','🎁 Surpresa','💕 Amor','✨ Clique aqui','🌟 Opa!','👉 Aqui não!','😘 Quase!'];
   const btns=[];
-
   for(let i=0;i<8;i++){
-    const btn=document.createElement('div');
-    btn.className='flee-btn';
-    btn.textContent=labels[i % labels.length];
-    const x=5+Math.random()*75;
-    const y=10+Math.random()*50;
-    btn.style.left=x+'%';
-    btn.style.top=y+'%';
-    btn.style.opacity='0';
-    btn.style.transition='none';
-    container.appendChild(btn);
-    btns.push(btn);
+    const btn=document.createElement('div');btn.className='flee-btn';btn.textContent=labels[i%labels.length];
+    btn.style.left=(5+Math.random()*75)+'%';btn.style.top=(10+Math.random()*50)+'%';btn.style.opacity='0';btn.style.transition='none';
+    container.appendChild(btn);btns.push(btn);
   }
-
-  // Fade in after a tiny delay
   requestAnimationFrame(()=>{
-    btns.forEach(b=>{
-      b.style.transition='opacity 1s ease, left .6s cubic-bezier(.34,1.56,.64,1), top .6s cubic-bezier(.34,1.56,.64,1)';
-      b.style.opacity=(.35+Math.random()*.4).toFixed(2);
-    });
+    btns.forEach(b=>{b.style.transition='opacity 1s ease, left .6s cubic-bezier(.34,1.56,.64,1), top .6s cubic-bezier(.34,1.56,.64,1)';b.style.opacity=(.35+Math.random()*.4).toFixed(2);});
   });
-
-  // Move them every 1.6s - they always run away
-  let moveCount=0;
   fleeingInterval=setInterval(()=>{
-    moveCount++;
-    const vw=window.innerWidth;
-    const vh=window.innerHeight;
-
     btns.forEach(btn=>{
-      const rect=btn.getBoundingClientRect();
-      const bx=rect.left, by=rect.top;
-      const bw=rect.width, bh=rect.height;
-
-      // Move away from center-ish, but stay visible
-      let nx=5+Math.random()*75;
-      let ny=8+Math.random()*55;
-
-      // Ensure minimum margin from edges
-      nx=Math.max(2,Math.min(82,nx));
-      ny=Math.max(5,Math.min(65,ny));
-
-      btn.style.left=nx+'%';
-      btn.style.top=ny+'%';
-
-      // Slight opacity variation
-      btn.style.opacity=(.3+Math.random()*.5).toFixed(2);
+      btn.style.left=(2+Math.random()*82)+'%';btn.style.top=(5+Math.random()*60)+'%';btn.style.opacity=(.3+Math.random()*.5).toFixed(2);
     });
   },1600);
 }
 
 // ====== CONFETTI ======
 function confettiStart(){
-  const c=document.getElementById('confetti-canvas');
-  const ctx=c.getContext('2d');
-  c.width=window.innerWidth;
-  c.height=window.innerHeight;
+  const c=document.getElementById('confetti-canvas');const ctx=c.getContext('2d');
+  c.width=window.innerWidth;c.height=window.innerHeight;
   const pieces=[];
   const colors=['#c9a84c','#e8b4b8','#d4a5a5','#fff8f0','#c4898f','#f0d080','#a05a65'];
-  for(let i=0;i<150;i++){
-    pieces.push({
-      x:Math.random()*c.width,y:Math.random()*c.height-c.height,
-      w:6+Math.random()*8,h:4+Math.random()*6,
-      dx:(Math.random()-.5)*2,dy:1+Math.random()*3,
-      color:colors[Math.floor(Math.random()*colors.length)],
-      rot:Math.random()*360,dr:(Math.random()-.5)*4
-    });
-  }
+  for(let i=0;i<150;i++) pieces.push({x:Math.random()*c.width,y:Math.random()*c.height-c.height,w:6+Math.random()*8,h:4+Math.random()*6,dx:(Math.random()-.5)*2,dy:1+Math.random()*3,color:colors[Math.floor(Math.random()*colors.length)],rot:Math.random()*360,dr:(Math.random()-.5)*4});
   let frame=0;
   function draw(){
     ctx.clearRect(0,0,c.width,c.height);
-    pieces.forEach(p=>{
-      p.x+=p.dx;p.y+=p.dy;p.rot+=p.dr;
-      if(p.y>c.height+10) p.y=-10;
-      ctx.save();
-      ctx.translate(p.x,p.y);
-      ctx.rotate(p.rot*Math.PI/180);
-      ctx.fillStyle=p.color;
-      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
-      ctx.restore();
-    });
+    pieces.forEach(p=>{p.x+=p.dx;p.y+=p.dy;p.rot+=p.dr;if(p.y>c.height+10)p.y=-10;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.color;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();});
     if(frame++<300) requestAnimationFrame(draw);
   }
   draw();
 }
 
-window.addEventListener('resize',()=>{
-  const c=document.getElementById('confetti-canvas');
-  if(c){c.width=window.innerWidth;c.height=window.innerHeight}
-});
+window.addEventListener('resize',()=>{const c=document.getElementById('confetti-canvas');if(c){c.width=window.innerWidth;c.height=window.innerHeight}});
 </script>
 </body>
 </html>
