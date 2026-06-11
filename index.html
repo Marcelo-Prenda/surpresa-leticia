@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Surpresa para Letícia ❤️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Lato',sans-serif;
+  background:#1a0a0e;
+  color:#fff8f0;
+  overflow-x:hidden;
+  min-height:100dvh;
+}
+h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
+.screen{
+  position:fixed;top:0;left:0;width:100%;height:100dvh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;text-align:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .6s ease, transform .6s ease;
+  transform:scale(.95);
+  z-index:1;
+}
+.screen.active{
+  opacity:1;pointer-events:auto;
+  transform:scale(1);
+  z-index:10;
+}
+/* Petals */
+#petals{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:999;
+  overflow:hidden;
+}
+.petal{
+  position:absolute;top:-40px;
+  width:20px;height:28px;
+  background:radial-gradient(ellipse at 30% 30%, #e8b4b8, #c4898f, #a05a65);
+  border-radius:50% 0 50% 0;
+  opacity:.6;
+  animation:fall linear infinite;
+}
+@keyframes fall{
+  0%{transform:translateY(0) rotate(0deg) scale(1);opacity:.7}
+  100%{transform:translateY(110vh) rotate(720deg) scale(.3);opacity:0}
+}
+
+/* Screen 1 - Opening */
+#screen-1{background:linear-gradient(135deg,#1a0a0e 0%,#2d141c 50%,#1a0a0e 100%)}
+#screen-1 .title{
+  font-size:clamp(2rem,7vw,4.5rem);color:#e8c4a0;
+  text-shadow:0 0 40px rgba(200,150,120,.3);
+  animation:fadeInUp 1.2s ease forwards;
+}
+#screen-1 .subtitle{
+  font-family:'Lato',sans-serif;font-weight:300;
+  font-size:clamp(1rem,3vw,1.5rem);
+  color:#d4a5a5;margin-top:15px;
+  animation:fadeInUp 1.2s ease .3s forwards;
+  opacity:0;
+}
+#screen-1 .btn-start{
+  margin-top:40px;padding:16px 48px;
+  font-family:'Playfair Display',serif;font-size:1.2rem;
+  background:linear-gradient(135deg,#c9a84c,#a8862e);
+  color:#1a0a0e;border:none;border-radius:50px;
+  cursor:pointer;transition:all .3s;
+  font-weight:600;letter-spacing:.5px;
+  animation:fadeInUp 1.2s ease .6s forwards;
+  opacity:0;box-shadow:0 4px 25px rgba(201,168,76,.3);
+}
+#screen-1 .btn-start:hover{transform:scale(1.05);box-shadow:0 6px 35px rgba(201,168,76,.5)}
+
+/* Screen 2 - Quiz */
+#screen-2{background:linear-gradient(135deg,#1a0a0e,#2d141c)}
+#screen-2 .progress{font-size:.9rem;color:#d4a5a5;margin-bottom:10px;font-weight:300}
+#screen-2 h2{font-size:clamp(1.3rem,4vw,2rem);color:#e8c4a0;margin-bottom:25px;max-width:600px;line-height:1.4}
+#screen-2 .options{display:flex;flex-direction:column;gap:12px;width:100%;max-width:500px}
+#screen-2 .option{
+  padding:14px 20px;background:rgba(255,248,240,.06);border:1.5px solid rgba(201,168,76,.3);
+  border-radius:12px;color:#fff8f0;cursor:pointer;transition:all .25s;
+  font-family:'Lato',sans-serif;font-size:.95rem;text-align:left;
+}
+#screen-2 .option:hover{background:rgba(201,168,76,.15);border-color:#c9a84c;transform:translateX(5px)}
+#screen-2 .option.selected{background:rgba(201,168,76,.2);border-color:#c9a84c}
+#screen-2 .text-field{
+  width:100%;max-width:500px;
+  padding:18px 20px;background:rgba(255,255,255,.05);border:1.5px solid rgba(201,168,76,.3);
+  border-radius:12px;color:#a09080;font-family:'Lato',sans-serif;font-size:.95rem;
+  resize:none;min-height:80px;
+}
+#screen-2 .btn-next{
+  margin-top:20px;padding:14px 40px;
+  background:linear-gradient(135deg,#c9a84c,#a8862e);
+  color:#1a0a0e;border:none;border-radius:50px;
+  cursor:pointer;font-family:'Playfair Display',serif;font-size:1rem;
+  font-weight:600;transition:all .3s;
+}
+#screen-2 .btn-next:hover{transform:scale(1.05)}
+
+/* Screen 3 - Result */
+#screen-3{background:linear-gradient(135deg,#1a0a0e,#2d141c)}
+#screen-3 .score{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.5rem,8vw,5rem);color:#c9a84c;
+  text-shadow:0 0 50px rgba(201,168,76,.3);
+  margin-bottom:10px;
+}
+#screen-3 .score-label{font-size:clamp(1rem,3vw,1.4rem);color:#e8c4a0;margin-bottom:8px}
+#screen-3 .score-msg{font-family:'Lato',sans-serif;font-weight:300;color:#d4a5a5;font-size:clamp(1rem,2.5vw,1.3rem);margin-bottom:30px}
+#screen-3 .btn-gift{
+  padding:16px 48px;
+  background:linear-gradient(135deg,#c9a84c,#a8862e);
+  color:#1a0a0e;border:none;border-radius:50px;
+  cursor:pointer;font-family:'Playfair Display',serif;font-size:1.2rem;
+  font-weight:600;transition:all .3s;
+  box-shadow:0 4px 25px rgba(201,168,76,.3);
+}
+#screen-3 .btn-gift:hover{transform:scale(1.05);box-shadow:0 6px 35px rgba(201,168,76,.5)}
+
+/* ===== Screen 4 - Slide + Password ===== */
+#screen-4{
+  background:linear-gradient(135deg,#1a0a0e,#2d141c);
+  overflow:hidden;
+  position:fixed;top:0;left:0;width:100%;height:100dvh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+#screen-4 .top-text{
+  position:relative;
+  z-index:10;
+  margin-bottom:15px;
+}
+#screen-4 h2{
+  font-size:clamp(1.3rem,4.5vw,2.2rem);color:#e8c4a0;
+  margin-bottom:6px;
+}
+#screen-4 .sub{
+  font-weight:300;color:#d4a5a5;
+  font-size:clamp(.85rem,2.2vw,1.1rem);
+}
+
+/* Slide Container */
+.slide-container{
+  position:relative;
+  width:90%;
+  max-width:360px;
+  height:280px;
+  overflow:hidden;
+  border-radius:20px;
+  box-shadow:0 8px 40px rgba(0,0,0,.5);
+  z-index:10;
+  margin-top:5px;
+}
+
+/* Front panel that slides */
+.slide-front{
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:linear-gradient(135deg,#3a1a28,#4a2030);
+  border:2px solid rgba(201,168,76,.3);
+  border-radius:20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  cursor:grab;
+  z-index:2;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:none;
+  transition:transform .5s cubic-bezier(.22,1,.36,1);
+  gap:12px;
+}
+.slide-front.dragging{
+  transition:none !important;
+  cursor:grabbing;
+}
+.slide-front.open{
+  transform:translateX(100%);
+}
+
+/* Back panel (password) */
+.slide-back{
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:linear-gradient(135deg,#1a0a0e,#2d141c);
+  border:2px solid rgba(201,168,76,.2);
+  border-radius:20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:25px 20px;
+  z-index:1;
+}
+.slide-back h3{
+  font-size:clamp(1rem,3vw,1.3rem);
+  color:#e8c4a0;
+  margin-bottom:5px;
+}
+.slide-back .equation{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1rem,3vw,1.3rem);
+  color:#fff8f0;
+  margin-bottom:20px;
+  line-height:1.6;
+  background:rgba(201,168,76,.08);
+  padding:12px 20px;
+  border-radius:12px;
+  border:1px solid rgba(201,168,76,.15);
+}
+.slide-back .equation .num{color:#c9a84c;font-weight:700}
+.slide-back .equation .eq-sign{color:#e8c4a0;font-size:1.2em}
+.password-input{
+  width:170px;
+  padding:14px 16px;
+  background:rgba(255,248,240,.08);
+  border:2px solid rgba(201,168,76,.4);
+  border-radius:12px;
+  color:#fff8f0;
+  font-family:'Lato',sans-serif;
+  font-size:1.6rem;
+  text-align:center;
+  letter-spacing:5px;
+  transition:border-color .3s;
+  outline:none;
+}
+.password-input:focus{
+  border-color:#c9a84c;
+  box-shadow:0 0 20px rgba(201,168,76,.2);
+}
+.password-input::placeholder{
+  color:rgba(255,248,240,.25);
+  font-size:.8rem;
+  letter-spacing:2px;
+}
+.btn-confirm{
+  margin-top:16px;
+  padding:12px 36px;
+  background:linear-gradient(135deg,#c9a84c,#a8862e);
+  color:#1a0a0e;
+  border:none;
+  border-radius:50px;
+  cursor:pointer;
+  font-family:'Playfair Display',serif;
+  font-size:1rem;
+  font-weight:600;
+  transition:all .3s;
+}
+.btn-confirm:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(201,168,76,.3)}
+.password-error{
+  color:#e8696b;
+  font-size:.85rem;
+  margin-top:10px;
+  min-height:22px;
+  font-family:'Lato',sans-serif;
+  font-weight:300;
+  transition:opacity .3s;
+}
+
+/* Drag hint */
+.drag-icon{
+  font-size:2.2rem;
+  animation:slideHint 1.4s ease-in-out infinite;
+  color:#c9a84c;
+}
+@keyframes slideHint{
+  0%,100%{transform:translateX(0);opacity:.4}
+  50%{transform:translateX(20px);opacity:1}
+}
+.slide-front p{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1rem,3vw,1.3rem);
+  color:#d4a5a5;
+}
+.drag-bar{
+  width:50px;height:5px;
+  background:rgba(255,248,240,.2);
+  border-radius:3px;
+  animation:pulseGlow 2s infinite;
+}
+@keyframes pulseGlow{
+  0%,100%{opacity:.3;box-shadow:0 0 5px rgba(201,168,76,.1)}
+  50%{opacity:.7;box-shadow:0 0 12px rgba(201,168,76,.2)}
+}
+
+/* Fleeing button - purely decorative */
+#screen-4 .btn-distract{
+  position:absolute;
+  padding:8px 18px;
+  background:rgba(201,168,76,.1);
+  color:rgba(201,168,76,.35);
+  border:1px solid rgba(201,168,76,.12);
+  border-radius:50px;
+  font-family:'Playfair Display',serif;
+  font-size:.7rem;
+  white-space:nowrap;
+  pointer-events:none;
+  z-index:1;
+  opacity:0;
+  transition:opacity 2s;
+}
+
+/* Screen 5 - Surprise */
+#screen-5{background:linear-gradient(135deg,#1a0a0e,#2d141c,#1a0a0e)}
+#screen-5 .msg{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.2rem,4vw,2rem);color:#e8c4a0;
+  line-height:1.7;max-width:500px;margin-bottom:25px;
+}
+#screen-5 .msg strong{color:#c9a84c;font-size:clamp(1.5rem,5vw,2.5rem)}
+#screen-5 .btn-whatsapp{
+  display:inline-block;
+  padding:16px 40px;
+  background:linear-gradient(135deg,#25D366,#128C7E);
+  color:#fff;border:none;border-radius:50px;
+  cursor:pointer;font-family:'Lato',sans-serif;font-size:1.1rem;
+  font-weight:700;text-decoration:none;transition:all .3s;
+  box-shadow:0 4px 20px rgba(37,211,102,.3);
+}
+#screen-5 .btn-whatsapp:hover{transform:scale(1.05);box-shadow:0 6px 30px rgba(37,211,102,.4)}
+#screen-5 .signature{margin-top:20px;color:#d4a5a5;font-style:italic}
+
+/* Confetti */
+#confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:998}
+
+/* Animations */
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Scrollbar hide */
+::-webkit-scrollbar{display:none}
+
+@media(max-width:480px){
+  #screen-2 .option{font-size:.85rem;padding:12px 16px}
+  .slide-container{height:250px;max-width:310px}
+  .password-input{width:150px;font-size:1.4rem}
+}
+</style>
+</head>
+<body>
+
+<div id="petals"></div>
+<canvas id="confetti-canvas"></canvas>
+
+<!-- SCREEN 1: OPENING -->
+<div id="screen-1" class="screen active">
+  <h1 class="title">Letícia Sant'Anna</h1>
+  <p class="subtitle">Hoje tem uma surpresa especial esperando por você 💕</p>
+  <button class="btn-start" onclick="showScreen(2)">Começar o Quiz</button>
+</div>
+
+<!-- SCREEN 2: QUIZ -->
+<div id="screen-2" class="screen">
+  <div class="progress" id="quiz-progress">Pergunta 1 de 10</div>
+  <h2 id="quiz-question"></h2>
+  <div class="options" id="quiz-options"></div>
+  <button class="btn-next" id="btn-quiz-next" style="display:none" onclick="nextQuestion()">Próxima</button>
+</div>
+
+<!-- SCREEN 3: RESULT -->
+<div id="screen-3" class="screen">
+  <div class="score">1000</div>
+  <div class="score-label">de 1000 🌟</div>
+  <p class="score-msg">Claro que sim — afinal, você é perfeita 💕<br>Mas a maior surpresa ainda está por vir...</p>
+  <button class="btn-gift" onclick="showScreen(4)">Ver minha surpresa 🎁</button>
+</div>
+
+<!-- ===== SCREEN 4: SLIDE + PASSWORD ===== -->
+<div id="screen-4" class="screen">
+  <div class="top-text">
+    <h2>Falta só mais uma coisinha...</h2>
+    <p class="sub">Arraste o painel para o lado →</p>
+  </div>
+
+  <div class="slide-container" id="slideContainer">
+    <!-- Back panel (password challenge) -->
+    <div class="slide-back">
+      <h3>💝 Resolva o enigma</h3>
+      <div class="equation">
+        (<span class="num">19</span> × 10000) + (<span class="num">12</span> × 100) + <span class="num">18</span>
+        <span class="eq-sign">=</span> ?
+      </div>
+      <input class="password-input" id="passwordInput" type="password" inputmode="numeric" maxlength="6" placeholder="??????" autocomplete="off">
+      <div class="password-error" id="passwordError"></div>
+      <button class="btn-confirm" onclick="checkPassword()">Confirmar ✅</button>
+    </div>
+
+    <!-- Front panel (draggable cover) -->
+    <div class="slide-front" id="slideFront">
+      <div class="drag-bar"></div>
+      <p>Arraste aqui →</p>
+      <div class="drag-icon">⟶</div>
+    </div>
+  </div>
+
+  <!-- Decorative fleeing buttons -->
+</div>
+
+<!-- SCREEN 5: SURPRISE -->
+<div id="screen-5" class="screen">
+  <div class="msg">
+    <strong>Letícia, você merece tudo de melhor!</strong> 🌸<br><br>
+    Como presente de Dia dos Namorados,<br>
+    você ganhou um dia inteiro de mimo e cuidado:<br><br>
+    ✨ <strong>SPA DAY</strong> ✨<br>
+    na <strong>SATTVA ESTÉTICA</strong><br>
+    em Miguel Pereira 💆‍♀️<br><br>
+    Para agendar, fale com eles:<br>
+    📱 (24) 92000-8644<br><br>
+    <em>Com todo o meu amor,<br>
+    Marcelo 💍</em>
+  </div>
+  <a class="btn-whatsapp" href="https://wa.me/5524920008644" target="_blank" rel="noopener">
+    💬 Falar no WhatsApp
+  </a>
+  <p class="signature">💕 Feliz Dia dos Namorados, meu amor</p>
+</div>
+
+<script>
+// ====== PETALS ======
+(function createPetals(){
+  const container=document.getElementById('petals');
+  for(let i=0;i<25;i++){
+    const p=document.createElement('div');
+    p.className='petal';
+    p.style.left=Math.random()*100+'%';
+    p.style.width=(12+Math.random()*14)+'px';
+    p.style.height=(p.style.width.replace('px','')*1.4)+'px';
+    p.style.animationDuration=(8+Math.random()*12)+'s';
+    p.style.animationDelay=(Math.random()*15)+'s';
+    p.style.opacity=.3+Math.random()*.4;
+    container.appendChild(p);
+  }
+})();
+
+// ====== SCREENS ======
+function showScreen(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('screen-'+n);
+  el.classList.add('active');
+  // Reset slide when entering screen 4
+  if(n===4) resetSlide();
+}
+
+// ====== QUIZ ======
+const questions=[
+  {q:'Em qual bairro nós nos conhecemos?', type:'choice',
+   opts:['Gramaxho','Gramacho','Gramados','Centro']},
+  {q:'Quem teve mais vergonha na primeira vez que visitou a casa do outro?', type:'choice',
+   opts:['Marcelo','Letícia','Os dois igualmente','Nenhum dos dois']},
+  {q:'Qual foi a nossa primeira viagem juntos?', type:'choice',
+   opts:['Para a casa do outro (pq era uma viagem)','Cabo Frio','Santa Catarina','Santa Catarima']},
+  {q:'Se a gente fosse comer a mesma coisa para sempre, qual seria?', type:'choice',
+   opts:['Pizza','Churrasco','Feijoada','Lasanha']},
+  {q:'Qual foi o dia mais engraçado que vocês tiveram juntos?', type:'text',
+   placeholder:'Essa você vai me responder pessoalmente, meu amor 💬'},
+  {q:'Qual série marcou mais a nossa história juntos?', type:'choice',
+   opts:['Game of Thrones','Vikings ou The Last Kingdom','Stranger Things','The Good Doctor']},
+  {q:'Qual é aquela mania do Marcelo que você acha mais engraçada?', type:'choice',
+   opts:['Imitar baleia','Coçar os dedos quando está pensando','Falar dormindo (desce daí)','Esquecer tudo no carro']},
+  {q:'Quem é mais provável de esquecer onde guardou a chave de casa?', type:'choice',
+   opts:['Letícia','Os dois','Marcelo','Nenhum dos dois']},
+  {q:'Qual foi o momento mais emocionante do dia 19 de dezembro de 2025?', type:'text',
+   placeholder:'Esse momento foi tão especial que você vai me contar pessoalmente 💍'},
+  {q:'Se não estivéssemos em Miguel Pereira agora, onde estaríamos comemorando?', type:'text',
+   placeholder:'Me responde isso pessoalmente, meu amor 🌍'}
+];
+
+let currentQuestion=0;
+
+function renderQuestion(){
+  const q=questions[currentQuestion];
+  document.getElementById('quiz-progress').textContent='Pergunta '+(currentQuestion+1)+' de 10';
+  document.getElementById('quiz-question').textContent=q.q;
+  const optsDiv=document.getElementById('quiz-options');
+  const nextBtn=document.getElementById('btn-quiz-next');
+  optsDiv.innerHTML='';
+  nextBtn.style.display='none';
+
+  if(q.type==='choice'){
+    q.opts.forEach(o=>{
+      const btn=document.createElement('button');
+      btn.className='option';
+      btn.textContent=o;
+      btn.onclick=function(){
+        document.querySelectorAll('.option').forEach(b=>b.classList.remove('selected'));
+        this.classList.add('selected');
+        nextBtn.style.display='block';
+      };
+      optsDiv.appendChild(btn);
+    });
+  }else{
+    const ta=document.createElement('textarea');
+    ta.className='text-field';
+    ta.placeholder=q.placeholder||'';
+    ta.disabled=true;
+    ta.rows=3;
+    optsDiv.appendChild(ta);
+    nextBtn.style.display='block';
+  }
+}
+
+function nextQuestion(){
+  currentQuestion++;
+  if(currentQuestion<questions.length){
+    renderQuestion();
+  }else{
+    document.getElementById('screen-2').classList.remove('active');
+    document.getElementById('screen-3').classList.add('active');
+  }
+}
+
+// Init quiz
+document.addEventListener('DOMContentLoaded',()=>{renderQuestion()});
+
+const origShow=showScreen;
+showScreen=function(n){
+  origShow(n);
+  if(n===2){currentQuestion=0;renderQuestion();}
+};
+
+// ====== SLIDE MECHANISM ======
+const slideFront=document.getElementById('slideFront');
+const slideContainer=document.getElementById('slideContainer');
+let isDragging=false;
+let startX=0;
+let currentX=0;
+let isOpen=false;
+
+function resetSlide(){
+  isOpen=false;
+  slideFront.classList.remove('open','dragging');
+  slideFront.style.transform='translateX(0)';
+  document.getElementById('passwordInput').value='';
+  document.getElementById('passwordError').textContent='';
+}
+
+// ---- Touch events ----
+slideFront.addEventListener('touchstart',function(e){
+  if(isOpen) return;
+  const t=e.touches[0];
+  startX=t.clientX;
+  currentX=startX;
+  isDragging=true;
+  slideFront.classList.add('dragging');
+},{passive:true});
+
+slideFront.addEventListener('touchmove',function(e){
+  if(!isDragging || isOpen) return;
+  const t=e.touches[0];
+  currentX=t.clientX;
+  const dx=currentX-startX;
+  if(dx<0) return; // only allow dragging right
+  const maxW=slideContainer.offsetWidth;
+  const pct=Math.min(dx/maxW,1);
+  slideFront.style.transform='translateX('+(pct*100)+'%)';
+},{passive:true});
+
+slideFront.addEventListener('touchend',function(e){
+  if(!isDragging) return;
+  isDragging=false;
+  slideFront.classList.remove('dragging');
+  const dx=currentX-startX;
+  const maxW=slideContainer.offsetWidth;
+  if(dx/maxW>0.4){
+    slideFront.classList.add('open');
+    slideFront.style.transform='';
+    isOpen=true;
+    setTimeout(()=>document.getElementById('passwordInput').focus(),400);
+    // Start distraction buttons
+    spawnDistractButtons();
+  }else{
+    slideFront.style.transform='translateX(0)';
+  }
+},{passive:true});
+
+// ---- Mouse events (desktop) ----
+slideFront.addEventListener('mousedown',function(e){
+  if(isOpen) return;
+  startX=e.clientX;
+  currentX=startX;
+  isDragging=true;
+  slideFront.classList.add('dragging');
+});
+
+document.addEventListener('mousemove',function(e){
+  if(!isDragging || isOpen) return;
+  currentX=e.clientX;
+  const dx=currentX-startX;
+  if(dx<0) return;
+  const maxW=slideContainer.offsetWidth;
+  const pct=Math.min(dx/maxW,1);
+  slideFront.style.transform='translateX('+(pct*100)+'%)';
+});
+
+document.addEventListener('mouseup',function(e){
+  if(!isDragging) return;
+  isDragging=false;
+  slideFront.classList.remove('dragging');
+  const dx=currentX-startX;
+  const maxW=slideContainer.offsetWidth;
+  if(dx/maxW>0.4){
+    slideFront.classList.add('open');
+    slideFront.style.transform='';
+    isOpen=true;
+    setTimeout(()=>document.getElementById('passwordInput').focus(),400);
+    spawnDistractButtons();
+  }else{
+    slideFront.style.transform='translateX(0)';
+  }
+});
+
+// ====== PASSWORD CHECK ======
+function checkPassword(){
+  const input=document.getElementById('passwordInput');
+  const err=document.getElementById('passwordError');
+  const val=input.value.trim();
+
+  if(val==='191218'){
+    err.textContent='';
+    err.style.color='#4caf50';
+    err.textContent='✅ Senha correta!';
+    setTimeout(()=>{
+      showScreen(5);
+      confettiStart();
+    },600);
+  }else{
+    err.style.color='#e8696b';
+    err.textContent='❌ Resposta incorreta, tente novamente 💪';
+    input.value='';
+    input.focus();
+    // Shake animation
+    input.style.animation='shake .4s ease';
+    setTimeout(()=>input.style.animation='',500);
+  }
+}
+
+// Allow Enter key on password field
+document.getElementById('passwordInput').addEventListener('keydown',function(e){
+  if(e.key==='Enter') checkPassword();
+});
+
+// ====== DECORATIVE FLEEING BUTTONS ======
+let distractInterval=null;
+
+function spawnDistractButtons(){
+  // Create 3-4 little fleeing buttons that move around
+  const screen4=document.getElementById('screen-4');
+  const existing=screen4.querySelectorAll('.btn-distract');
+  existing.forEach(el=>el.remove());
+
+  const labels=['🎯 Clique aqui!','💝 Presente','🎁 Surpresa','💕 Amor'];
+  const buttons=[];
+
+  for(let i=0;i<4;i++){
+    const btn=document.createElement('div');
+    btn.className='btn-distract';
+    btn.textContent=labels[i];
+    btn.style.left=(10+Math.random()*70)+'%';
+    btn.style.top=(5+Math.random()*30)+'%';
+    btn.style.opacity='0';
+    screen4.appendChild(btn);
+    buttons.push(btn);
+  }
+
+  // Fade in
+  setTimeout(()=>{
+    buttons.forEach(b=>b.style.opacity='.7');
+  },100);
+
+  // Move them around periodically
+  let moveCount=0;
+  if(distractInterval) clearInterval(distractInterval);
+  distractInterval=setInterval(()=>{
+    moveCount++;
+    buttons.forEach((btn,i)=>{
+      const x=10+Math.random()*75;
+      const y=5+Math.random()*35;
+      btn.style.left=x+'%';
+      btn.style.top=y+'%';
+      btn.style.opacity=.3+Math.random()*.5;
+    });
+    // Stop after 30 moves (about 60 seconds)
+    if(moveCount>30){
+      clearInterval(distractInterval);
+      distractInterval=null;
+      buttons.forEach(b=>{b.style.opacity='0'});
+    }
+  },2000);
+}
+
+// ====== CONFETTI ======
+function confettiStart(){
+  const c=document.getElementById('confetti-canvas');
+  const ctx=c.getContext('2d');
+  c.width=window.innerWidth;
+  c.height=window.innerHeight;
+  const pieces=[];
+  const colors=['#c9a84c','#e8b4b8','#d4a5a5','#fff8f0','#c4898f','#f0d080','#a05a65'];
+  for(let i=0;i<150;i++){
+    pieces.push({
+      x:Math.random()*c.width,y:Math.random()*c.height-c.height,
+      w:6+Math.random()*8,h:4+Math.random()*6,
+      dx:(Math.random()-.5)*2,dy:1+Math.random()*3,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      rot:Math.random()*360,dr:(Math.random()-.5)*4
+    });
+  }
+  let frame=0;
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    pieces.forEach(p=>{
+      p.x+=p.dx;p.y+=p.dy;p.rot+=p.dr;
+      if(p.y>c.height+10) p.y=-10;
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.color;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+    });
+    if(frame++<300) requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// Shake animation for wrong password
+const styleSheet=document.createElement('style');
+styleSheet.textContent=`
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)}
+  60%{transform:translateX(-5px)}
+  80%{transform:translateX(5px)}
+}`;
+document.head.appendChild(styleSheet);
+
+window.addEventListener('resize',()=>{
+  const c=document.getElementById('confetti-canvas');
+  c.width=window.innerWidth;
+  c.height=window.innerHeight;
+});
+</script>
+</body>
+</html>
