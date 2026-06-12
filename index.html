@@ -266,19 +266,19 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   margin-bottom:4px;
 }
 
-/* Heart grid */
-.heart-grid{
+/* Find the hidden heart */
+.find-grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:clamp(8px,2vw,14px);
-  max-width:260px;
-  width:80%;
+  grid-template-columns:repeat(4,1fr);
+  gap:clamp(8px,1.5vw,12px);
+  max-width:280px;
+  width:75%;
   margin:4px 0;
 }
-.heart-cell{
+.find-item{
   aspect-ratio:1;
   width:100%;
-  border-radius:14px;
+  border-radius:12px;
   background:rgba(255,248,240,.05);
   border:2px solid rgba(201,168,76,.2);
   display:flex;
@@ -286,32 +286,30 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   justify-content:center;
   font-size:clamp(1.5rem,5vw,2.2rem);
   cursor:pointer;
-  transition:all .25s ease;
+  transition:all .3s ease;
   user-select:none;
   -webkit-tap-highlight-color:transparent;
-  position:relative;
 }
-.heart-cell:active{transform:scale(.92)}
-.heart-cell.lit{
-  background:rgba(201,168,76,.3);
+.find-item:active{transform:scale(.9)}
+.find-item.revealed{
+  background:rgba(255,248,240,.1);
   border-color:#c9a84c;
-  box-shadow:0 0 25px rgba(201,168,76,.4), inset 0 0 15px rgba(201,168,76,.1);
-  transform:scale(1.08);
 }
-.heart-cell.correct-flash{
-  background:rgba(76,175,80,.3);
+.find-item.found{
+  background:rgba(76,175,80,.25);
   border-color:#4caf50;
-  box-shadow:0 0 20px rgba(76,175,80,.3);
+  box-shadow:0 0 25px rgba(76,175,80,.3);
+  animation:foundPulse .6s ease 3;
+  pointer-events:none;
 }
-.heart-cell.wrong-flash{
-  background:rgba(232,105,107,.3);
+.find-item.wrong{
+  background:rgba(232,105,107,.15);
   border-color:#e8696b;
-  box-shadow:0 0 20px rgba(232,105,107,.3);
   animation:cellShake .4s ease;
 }
-.heart-cell.disabled{
-  pointer-events:none;
-  opacity:.5;
+@keyframes foundPulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.12)}
 }
 @keyframes cellShake{
   0%,100%{transform:translateX(0)}
@@ -568,10 +566,10 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   .password-input{width:130px;font-size:1.2rem}
   .slide-back .equation{font-size:clamp(.7rem,2.2vw,.95rem)}
   .flee-btn{font-size:.65rem;padding:6px 12px}
-  .heart-grid{max-width:210px;gap:8px}
-  .heart-cell{font-size:clamp(1.3rem,4.5vw,1.8rem);border-radius:12px}
   .memory-grid{max-width:220px;gap:6px}
   .memory-card{font-size:clamp(1rem,3.5vw,1.5rem);border-radius:10px}
+  .find-grid{max-width:220px;gap:6px}
+  .find-item{font-size:clamp(1.3rem,4.5vw,1.8rem);border-radius:10px}
 }
 </style>
 </head>
@@ -827,8 +825,8 @@ function handleMemoryClick(idx) {
         document.getElementById('memorySub').textContent = '✨';
         setTimeout(() => {
           document.getElementById('memoryOverlay').classList.add('hidden');
-          document.getElementById('screen4-sub').textContent = 'Agora o desafio do coração! 💕';
-          setTimeout(() => initHeartPuzzle(), 500);
+          document.getElementById('screen4-sub').textContent = 'Encontre o coração escondido! 💕';
+          setTimeout(() => initFindHeart(), 500);
         }, 1200);
       } else {
         document.getElementById('memoryHint').textContent = `🎯 ${matchedPairsCount}/6 pares encontrados! Continue!`;
@@ -850,128 +848,78 @@ function handleMemoryClick(idx) {
   }
 }
 
-// ====== HEART MEMORY PUZZLE ======
-let puzzleSequence=[];
-let userSequence=[];
-let puzzleStep=0;
-let isPlaying=false;
+// ====== FIND THE HIDDEN HEART ======
 let puzzleSolved=false;
 
-function initHeartPuzzle(){
+function initFindHeart(){
   puzzleSolved=false;
   const overlay=document.getElementById('puzzleOverlay');
   overlay.classList.remove('hidden');
-  document.getElementById('screen4-sub').textContent='Complete o desafio do coração 💕';
-  generateSequence();
-  setTimeout(()=>playSequence(),600);
-}
+  document.getElementById('screen4-sub').textContent='Encontre o coração escondido! 💕';
+  document.getElementById('puzzleHint').textContent='Um 💕 está escondido entre as flores!';
+  document.getElementById('puzzleSub').textContent='🌸 Toque para revelar';
 
-function generateSequence(){
-  puzzleSequence=[];
-  for(let i=0;i<4;i++){
-    puzzleSequence.push(Math.floor(Math.random()*9));
+  const heartPos=Math.floor(Math.random()*12);
+  const grid=document.getElementById('findGrid');
+  grid.innerHTML='';
+  for(let i=0;i<12;i++){
+    const item=document.createElement('div');
+    item.className='find-item';
+    item.dataset.idx=i;
+    item.dataset.heart=i===heartPos?'1':'0';
+    item.textContent='🌸';
+    item.addEventListener('click',()=>handleFindClick(i));
+    item.addEventListener('touchstart',function(e){
+      if(this.dataset.touched)return;
+      this.dataset.touched='true';
+      handleFindClick(parseInt(this.dataset.idx));
+      setTimeout(()=>delete this.dataset.touched,300);
+    },{passive:true});
+    grid.appendChild(item);
   }
 }
 
-function playSequence(){
-  isPlaying=true;
-  userSequence=[];
-  puzzleStep=0;
-  const cells=document.querySelectorAll('.heart-cell');
-  cells.forEach(c=>c.classList.remove('lit','correct-flash','wrong-flash','disabled'));
-  document.getElementById('puzzleHint').textContent='Preste atenção... 💫';
-  document.getElementById('puzzleSub').textContent='👀 Observando...';
+function handleFindClick(idx){
+  if(puzzleSolved)return;
+  const items=document.querySelectorAll('.find-item');
+  const item=items[idx];
+  if(item.classList.contains('revealed'))return;
 
-  let i=0;
-  function lightNext(){
-    if(i>=puzzleSequence.length){
-      isPlaying=false;
-      cells.forEach(c=>c.classList.remove('disabled'));
-      document.getElementById('puzzleHint').textContent='Sua vez! Repita a sequência 👆';
-      document.getElementById('puzzleSub').textContent='❤️ Toque nos corações na mesma ordem';
-      return;
-    }
-    const idx=puzzleSequence[i];
-    const cell=cells[idx];
-    cell.classList.add('lit');
-    setTimeout(()=>{
-      cell.classList.remove('lit');
-      i++;
-      setTimeout(lightNext,300);
-    },700);
-  }
-  lightNext();
-}
+  item.classList.add('revealed');
 
-function handleHeartClick(idx){
-  if(isPlaying || puzzleSolved) return;
-
-  const cells=document.querySelectorAll('.heart-cell');
-  const cell=cells[idx];
-
-  cell.classList.add('lit');
-  userSequence.push(idx);
-
-  if(userSequence[userSequence.length-1]!==puzzleSequence[userSequence.length-1]){
-    // Wrong!
-    cell.classList.remove('lit');
-    cell.classList.add('wrong-flash');
-    document.getElementById('puzzleHint').textContent='😅 Não foi dessa vez! Vamos de novo...';
-    document.getElementById('puzzleSub').textContent='🔄 Nova sequência...';
-    cells.forEach(c=>c.classList.add('disabled'));
-    setTimeout(()=>{
-      cells.forEach(c=>c.classList.remove('wrong-flash','lit','disabled'));
-      playSequence();
-    },1200);
-    return;
-  }
-
-  // Correct so far
-  setTimeout(()=>cell.classList.remove('lit'),300);
-
-  if(userSequence.length===puzzleSequence.length){
-    // All correct!
+  if(item.dataset.heart==='1'){
+    // Found the heart!
     puzzleSolved=true;
-    document.getElementById('puzzleHint').textContent='💕 Perfeita! ❤️';
+    item.textContent='💕';
+    item.classList.add('found');
+    document.getElementById('puzzleHint').textContent='💕 Encontrou o coração! ❤️';
     document.getElementById('puzzleSub').textContent='✨';
 
-    // Celebration flash
-    cells.forEach((c,i)=>{
-      setTimeout(()=>c.classList.add('correct-flash'),i*80);
-    });
     setTimeout(()=>{
-      cells.forEach(c=>c.classList.remove('correct-flash'));
-      // Show success message
       const puzzleEl=document.getElementById('puzzleOverlay');
       puzzleEl.innerHTML=`
         <div class="puzzle-success show">
           <div class="check">💕</div>
-          <p>Seu coração sabe o caminho!</p>
+          <p>Você encontrou o amor verdadeiro!</p>
           <p style="font-size:clamp(.8rem,2.2vw,1rem);color:#d4a5a5;font-weight:300">Agora arraste o painel para desbloquear 🎁</p>
         </div>
       `;
-      // After showing success, fade puzzle and reveal slide
       setTimeout(()=>{
         puzzleEl.classList.add('hidden');
         document.getElementById('screen4-sub').textContent='Arraste o painel para o lado →';
-        // Enable the slide
         enableSlide();
       },1500);
-    },500);
+    },800);
+  }else{
+    // Flower
+    item.classList.add('wrong');
+    document.getElementById('puzzleHint').textContent='😅 Não é aqui! Tente outra flor...';
+    setTimeout(()=>{
+      item.classList.remove('wrong','revealed');
+      item.textContent='🌸';
+    },700);
   }
 }
-
-// Attach heart click handlers
-document.querySelectorAll('.heart-cell').forEach(cell=>{
-  cell.addEventListener('click',()=>handleHeartClick(parseInt(cell.dataset.idx)));
-  cell.addEventListener('touchstart',function(e){
-    // Avoid double-firing on mobile
-    if(this.dataset.touched) return;
-    this.dataset.touched='true';
-    handleHeartClick(parseInt(this.dataset.idx));
-    setTimeout(()=>delete this.dataset.touched,300);
-  },{passive:true});
-});
 
 // ====== SLIDE MECHANISM (only enabled after puzzle) ======
 const slideFront=document.getElementById('slideFront');
@@ -993,22 +941,13 @@ function resetAll(){
   memorySolved=false;matchedPairsCount=0;flippedCards=[];memoryLocked=false;
   const memOverlay=document.getElementById('memoryOverlay');
   if(memOverlay)memOverlay.classList.add('hidden');
-  // Restore heart puzzle HTML
+  // Restore find-heart HTML
   puzzleSolved=false;
   const puzEl=document.getElementById('puzzleOverlay');
   if(puzEl){
     puzEl.classList.remove('hidden');
-    puzEl.innerHTML='<h3>💕 Desafio do Coração</h3><p class="puzzle-hint" id="puzzleHint">Preste atenção na sequência...</p><div class="heart-grid" id="heartGrid"><div class="heart-cell" data-idx="0">💗</div><div class="heart-cell" data-idx="1">💗</div><div class="heart-cell" data-idx="2">💗</div><div class="heart-cell" data-idx="3">💗</div><div class="heart-cell" data-idx="4">💗</div><div class="heart-cell" data-idx="5">💗</div><div class="heart-cell" data-idx="6">💗</div><div class="heart-cell" data-idx="7">💗</div><div class="heart-cell" data-idx="8">💗</div></div><p class="puzzle-sub" id="puzzleSub">👆 Toque na mesma ordem</p>';
-    // Re-attach heart click handlers
-    document.querySelectorAll('.heart-cell').forEach(function(cell){
-      cell.addEventListener('click',function(){handleHeartClick(parseInt(cell.dataset.idx));});
-      cell.addEventListener('touchstart',function(e){
-        if(this.dataset.touched)return;
-        this.dataset.touched='true';
-        handleHeartClick(parseInt(this.dataset.idx));
-        setTimeout(function(){delete this.dataset.touched;}.bind(this),300);
-      },{passive:true});
-    });
+    puzEl.innerHTML='<h3>🌸 Encontre o Coração</h3><p class="puzzle-hint" id="puzzleHint">Um 💕 está escondido entre as flores!</p><div class="find-grid" id="findGrid"></div><p class="puzzle-sub" id="puzzleSub">🌸 Toque para revelar</p>';
+    // Re-attach find-item click handlers will be done by initFindHeart()
   }
 }
 
