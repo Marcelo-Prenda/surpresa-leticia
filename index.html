@@ -148,6 +148,85 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   transition:opacity .5s;
 }
 
+/* ======== MATCHING PAIRS MEMORY GAME ======== */
+.memory-overlay{
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:25;
+  background:rgba(26,10,14,.95);
+  transition:opacity .6s ease, transform .6s ease;
+  gap:6px;
+  pointer-events:auto;
+}
+.memory-overlay.hidden{
+  opacity:0;
+  pointer-events:none;
+  transform:scale(.9);
+}
+.memory-overlay h3{
+  font-size:clamp(.95rem,3.2vw,1.4rem);
+  color:#e8c4a0;
+  margin-bottom:2px;
+}
+.memory-overlay .memory-hint{
+  font-size:clamp(.7rem,2vw,.9rem);
+  color:#d4a5a5;
+  font-weight:300;
+  margin-bottom:2px;
+  min-height:1.4em;
+}
+.memory-overlay .memory-sub{
+  font-size:clamp(.65rem,1.8vw,.8rem);
+  color:rgba(201,168,76,.5);
+  font-weight:300;
+}
+.memory-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:clamp(6px,1.5vw,10px);
+  max-width:280px;
+  width:75%;
+  margin:2px 0;
+}
+.memory-card{
+  aspect-ratio:1;
+  width:100%;
+  border-radius:12px;
+  background:linear-gradient(135deg,#3a1a28,#4a2030);
+  border:2px solid rgba(201,168,76,.25);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(1.2rem,4vw,2rem);
+  cursor:pointer;
+  transition:all .25s ease;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.memory-card:active{transform:scale(.92)}
+.memory-card.revealed{
+  background:rgba(255,248,240,.08);
+  border-color:#c9a84c;
+  transform:scale(1.05);
+}
+.memory-card.matched{
+  background:rgba(76,175,80,.2);
+  border-color:#4caf50;
+  pointer-events:none;
+  opacity:.7;
+  transform:scale(.95);
+}
+.memory-card.wrong{
+  background:rgba(232,105,107,.2);
+  border-color:#e8696b;
+  animation:cellShake .4s ease;
+}
+
 /* ======== HEART MEMORY PUZZLE ======== */
 .puzzle-overlay{
   position:absolute;
@@ -267,7 +346,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   position:relative;
   width:90%;
   max-width:340px;
-  height:min(280px,45vh);
+  height:min(320px,50vh);
   overflow:hidden;
   border-radius:18px;
   box-shadow:0 8px 40px rgba(0,0,0,.5);
@@ -491,6 +570,8 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   .flee-btn{font-size:.65rem;padding:6px 12px}
   .heart-grid{max-width:210px;gap:8px}
   .heart-cell{font-size:clamp(1.3rem,4.5vw,1.8rem);border-radius:12px}
+  .memory-grid{max-width:220px;gap:6px}
+  .memory-card{font-size:clamp(1rem,3.5vw,1.5rem);border-radius:10px}
 }
 </style>
 </head>
@@ -532,6 +613,13 @@ h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600}
   </div>
 
   <div class="slide-container" id="slideContainer">
+    <!-- MATCHING PAIRS MEMORY GAME -->
+    <div class="memory-overlay" id="memoryOverlay">
+      <h3>🃏 Jogo da Memória</h3>
+      <p class="memory-hint" id="memoryHint">Encontre todos os pares!</p>
+      <div class="memory-grid" id="memoryGrid"></div>
+      <p class="memory-sub" id="memorySub">👆 Toque para virar as cartas</p>
+    </div>
     <!-- HEART MEMORY PUZZLE -->
     <div class="puzzle-overlay" id="puzzleOverlay">
       <h3>💕 Desafio do Coração</h3>
@@ -615,7 +703,7 @@ function showScreen(n){
   if(n===4){
     resetAll();
     initFleeingButtons();
-    initHeartPuzzle();
+    initMemoryGame();
   }
 }
 
@@ -663,6 +751,104 @@ function nextQuestion(){
 document.addEventListener('DOMContentLoaded',()=>{renderQuestion()});
 const origShow=showScreen;
 showScreen=function(n){origShow(n);if(n===2){currentQuestion=0;renderQuestion();}};
+
+// ====== MATCHING PAIRS MEMORY GAME ======
+const memorySymbols = ['💕','🌹','💍','🎁','🎀','💎'];
+let memoryCards = [];
+let flippedCards = [];
+let matchedPairsCount = 0;
+let memoryLocked = false;
+let memorySolved = false;
+
+function initMemoryGame() {
+  memorySolved = false;
+  matchedPairsCount = 0;
+  flippedCards = [];
+  memoryLocked = false;
+
+  const overlay = document.getElementById('memoryOverlay');
+  overlay.classList.remove('hidden');
+  document.getElementById('memoryHint').textContent = 'Encontre todos os pares! 🎴';
+  document.getElementById('memorySub').textContent = '👆 Toque para virar as cartas';
+
+  const symbols = [...memorySymbols, ...memorySymbols];
+  for (let i = symbols.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [symbols[i], symbols[j]] = [symbols[j], symbols[i]];
+  }
+  memoryCards = symbols;
+
+  const grid = document.getElementById('memoryGrid');
+  grid.innerHTML = '';
+  symbols.forEach((sym, idx) => {
+    const card = document.createElement('div');
+    card.className = 'memory-card';
+    card.dataset.idx = idx;
+    card.textContent = '❓';
+    card.addEventListener('click', () => handleMemoryClick(idx));
+    card.addEventListener('touchstart', function (e) {
+      if (this.dataset.touched) return;
+      this.dataset.touched = 'true';
+      handleMemoryClick(parseInt(this.dataset.idx));
+      setTimeout(() => delete this.dataset.touched, 300);
+    }, { passive: true });
+    grid.appendChild(card);
+  });
+}
+
+function handleMemoryClick(idx) {
+  if (memoryLocked || memorySolved) return;
+  const cards = document.querySelectorAll('.memory-card');
+  const card = cards[idx];
+  if (card.classList.contains('revealed') || card.classList.contains('matched')) return;
+  if (flippedCards.length >= 2) return;
+
+  card.classList.add('revealed');
+  card.textContent = memoryCards[idx];
+  flippedCards.push(idx);
+  document.getElementById('memoryHint').textContent = flippedCards.length === 1 ? 'Agora encontre o par... 🤔' : '';
+
+  if (flippedCards.length === 2) {
+    memoryLocked = true;
+    const [i1, i2] = flippedCards;
+
+    if (memoryCards[i1] === memoryCards[i2]) {
+      cards[i1].classList.remove('revealed');
+      cards[i1].classList.add('matched');
+      cards[i2].classList.remove('revealed');
+      cards[i2].classList.add('matched');
+      matchedPairsCount++;
+      flippedCards = [];
+      memoryLocked = false;
+
+      if (matchedPairsCount === 6) {
+        memorySolved = true;
+        document.getElementById('memoryHint').textContent = '🎉 Memória perfeita! 💕';
+        document.getElementById('memorySub').textContent = '✨';
+        setTimeout(() => {
+          document.getElementById('memoryOverlay').classList.add('hidden');
+          document.getElementById('screen4-sub').textContent = 'Agora o desafio do coração! 💕';
+          setTimeout(() => initHeartPuzzle(), 500);
+        }, 1200);
+      } else {
+        document.getElementById('memoryHint').textContent = `🎯 ${matchedPairsCount}/6 pares encontrados! Continue!`;
+      }
+    } else {
+      cards[i1].classList.add('wrong');
+      cards[i2].classList.add('wrong');
+      document.getElementById('memoryHint').textContent = '😅 Não foi dessa vez!';
+      setTimeout(() => {
+        cards[i1].classList.remove('revealed', 'wrong');
+        cards[i1].textContent = '❓';
+        cards[i2].classList.remove('revealed', 'wrong');
+        cards[i2].textContent = '❓';
+        flippedCards = [];
+        memoryLocked = false;
+        document.getElementById('memoryHint').textContent = `Continue! ${matchedPairsCount}/6 pares encontrados 🎴`;
+      }, 1000);
+    }
+  }
+}
 
 // ====== HEART MEMORY PUZZLE ======
 let puzzleSequence=[];
@@ -803,6 +989,10 @@ function resetAll(){
   if(pw)pw.value='';
   const pe=document.getElementById('passwordError');
   if(pe)pe.textContent='';
+  // Reset memory game
+  memorySolved=false;matchedPairsCount=0;flippedCards=[];memoryLocked=false;
+  const memOverlay=document.getElementById('memoryOverlay');
+  if(memOverlay)memOverlay.classList.add('hidden');
 }
 
 slideFront.addEventListener('touchstart',function(e){
