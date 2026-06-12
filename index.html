@@ -993,6 +993,23 @@ function resetAll(){
   memorySolved=false;matchedPairsCount=0;flippedCards=[];memoryLocked=false;
   const memOverlay=document.getElementById('memoryOverlay');
   if(memOverlay)memOverlay.classList.add('hidden');
+  // Restore heart puzzle HTML
+  puzzleSolved=false;
+  const puzEl=document.getElementById('puzzleOverlay');
+  if(puzEl){
+    puzEl.classList.remove('hidden');
+    puzEl.innerHTML='<h3>💕 Desafio do Coração</h3><p class="puzzle-hint" id="puzzleHint">Preste atenção na sequência...</p><div class="heart-grid" id="heartGrid"><div class="heart-cell" data-idx="0">💗</div><div class="heart-cell" data-idx="1">💗</div><div class="heart-cell" data-idx="2">💗</div><div class="heart-cell" data-idx="3">💗</div><div class="heart-cell" data-idx="4">💗</div><div class="heart-cell" data-idx="5">💗</div><div class="heart-cell" data-idx="6">💗</div><div class="heart-cell" data-idx="7">💗</div><div class="heart-cell" data-idx="8">💗</div></div><p class="puzzle-sub" id="puzzleSub">👆 Toque na mesma ordem</p>';
+    // Re-attach heart click handlers
+    document.querySelectorAll('.heart-cell').forEach(function(cell){
+      cell.addEventListener('click',function(){handleHeartClick(parseInt(cell.dataset.idx));});
+      cell.addEventListener('touchstart',function(e){
+        if(this.dataset.touched)return;
+        this.dataset.touched='true';
+        handleHeartClick(parseInt(this.dataset.idx));
+        setTimeout(function(){delete this.dataset.touched;}.bind(this),300);
+      },{passive:true});
+    });
+  }
 }
 
 slideFront.addEventListener('touchstart',function(e){
